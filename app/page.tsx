@@ -64,19 +64,19 @@ export default async function HomePage() {
           </Link> */}
         </div>
       </div>
-      <p className="my-5 max-w-[600px] text-neutral-800 dark:text-neutral-200">
+      <p className="my-5 max-w-[600px]">
         {bio()}
       </p>
-      <ul className="flex flex-col md:flex-row mt-8 space-x-0 md:space-x-4 space-y-2 md:space-y-0 font-sm text-neutral-500 dark:text-neutral-400">
+      <ul className="flex flex-col md:flex-row mt-8 space-x-0 md:space-x-4 space-y-2 md:space-y-0 font-sm text-neutral-500 dark:text-sky hover:opacity-70">
         <li>
           <a
-            className="flex items-center hover:text-neutral-700 dark:hover:text-neutral-200 transition-all"
+            className="flex items-center transition-all "
             rel="noopener noreferrer"
             target="_blank"
             href="https://www.linkedin.com/in/william-laroche/?locale=en_US"
           >
             <ArrowIcon />
-            <p className="h-7">linked in</p>
+            <p className="h-7 dark:text-sky">linked in</p>
           </a>
         </li>
       </ul>

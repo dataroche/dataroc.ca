@@ -59,9 +59,10 @@ export default function Navbar() {
                     key={path}
                     href={path}
                     className={clsx(
-                      'transition-all text-white hover:text-black flex align-middle',
+                      'transition-all hover:text-black flex align-middle',
                       {
                         'text-slate-500 font-bold': isActive,
+                        'text-white': !isActive
                       }
                     )}
                   >
