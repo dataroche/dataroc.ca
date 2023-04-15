@@ -9,7 +9,6 @@ import {
 } from 'components/icons';
 import PageTitle from 'components/page-title';
 import avatar from '../public/profile-square.jpg';
-import { about, bio } from 'lib/info';
 
 export const revalidate = 60;
 
@@ -29,9 +28,9 @@ export default async function HomePage() {
   return (
     <section className="max-w-[600px]">
       <PageTitle>William Laroche</PageTitle>
-      <p className="italic"><a className="dark:text-sky underline" href="#why-dataroc">(dataroc*)</a></p>
+      <p><a className="dark:text-sky" href="#why-dataroc">(dataroc)</a></p>
       <p className="my-5">
-        Hey, I'm an electrical engineering graduate turned software dev. Currently building the local business user community??? <a className="dark:text-sky underline" href="https://thethirdplace.is" target="_blank">@thethirdplace</a>
+        Hey, I'm an electrical engineering graduate turned software dev. Currently building software to help local businesses build a sense of home and community <a className="dark:text-sky underline" href="https://thethirdplace.is" target="_blank">@thethirdplace</a>.
       </p>
       <div className="flex items-start md:items-center my-8 flex-col md:flex-row">
         <Image
@@ -71,9 +70,6 @@ export default async function HomePage() {
           </Link> */}
         </div>
       </div>
-      <p className="my-5">
-        {bio()}
-      </p>
       <ul className="flex flex-col md:flex-row mt-8 space-x-0 md:space-x-4 space-y-2 md:space-y-0 font-sm text-neutral-500 dark:text-sky hover:opacity-70">
         <li>
           <a
@@ -87,12 +83,17 @@ export default async function HomePage() {
           </a>
         </li>
       </ul>
+      <p className="my-5">
+        When I'm not "coding", I'm probably playing volley ball 🏐, dancing salsa 🕺, but (who am I kidding) I'm probably coding. I love to travel, meet new people and experience extraordinary food. Next up: Denmark!
+      </p>
       <h2 className="my-5" id="why-dataroc">
         Why dataroc?
       </h2>
       <p>
         Dataroc is a portmanteau of <span className="text-sky">data</span> and part of my last name, La<span className="text-sky">roc</span>he :-)
       </p>
+      <hr className="my-10" />
+      <p className="italic font-light"><a className="dark:text-sky" href="https://github.com/dataroche/dataroc.ca">This website's source code</a> is freely available and is based on Lee Robinson's template</p>
     </section>
   );
 }
