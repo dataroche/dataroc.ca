@@ -11,6 +11,11 @@ html {
   min-width: 360px;
 }
 
+h1 {
+  @apply dark:text-sky font-bold text-3xl mb-5;
+  text-transform: lowercase;
+}
+
 .prose .anchor {
   @apply absolute invisible no-underline;
 

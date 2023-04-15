@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
+const colors = require('tailwindcss/colors')
+
 module.exports = {
   content: [
     './app/**/*.{ts,tsx}',
@@ -6,10 +9,12 @@ module.exports = {
     './content/**/*.mdx',
   ],
   theme: {
+    colors: {
+      ...colors,
+      sky: '#93fee2',
+      blue: '#3c4c65'
+    },
     extend: {
-      fontFamily: {
-        serif: ['var(--font-kaisei)'],
-      },
       typography: {
         quoteless: {
           css: {
@@ -24,4 +29,5 @@ module.exports = {
     hoverOnlyWhenSupported: true,
   },
   plugins: [require('@tailwindcss/typography')],
+  darkMode: 'class',
 };

@@ -3,7 +3,7 @@
 // so using the API directly for now, maybe change later
 //
 // You can view previous version with react-static-tweets in the PR commits
-// https://github.com/leerob/leerob.io/pull/564
+// https://github.com/leerob/dataroc.ca/pull/564
 export const getTweets = async (ids) => {
   if (ids.length === 0) {
     return [];

@@ -5,8 +5,10 @@ export const config = {
   runtime: 'edge',
 };
 
+// TODO(will): this is the open graph resposne
+
 const font = fetch(
-  new URL('../../public/fonts/kaisei-tokumin-bold.ttf', import.meta.url)
+  new URL('../../public/fonts/fragment-mono.ttf', import.meta.url)
 ).then((res) => res.arrayBuffer());
 
 export default async function handler(req: NextRequest) {
@@ -24,7 +26,7 @@ export default async function handler(req: NextRequest) {
           flexDirection: 'column',
           alignItems: 'flex-start',
           justifyContent: 'center',
-          backgroundImage: 'url(https://leerob.io/og-bg.png)',
+          backgroundImage: 'url(https://dataroc.ca/og-bg.png)',
         }}
       >
         <div
@@ -33,7 +35,7 @@ export default async function handler(req: NextRequest) {
             marginRight: 190,
             display: 'flex',
             fontSize: 130,
-            fontFamily: 'Kaisei Tokumin',
+            fontFamily: 'Fragment Mono',
             letterSpacing: '-0.05em',
             fontStyle: 'normal',
             color: 'white',
@@ -50,7 +52,7 @@ export default async function handler(req: NextRequest) {
       height: 1080,
       fonts: [
         {
-          name: 'Kaisei Tokumin',
+          name: 'Fragment Mono',
           data: fontData,
           style: 'normal',
         },

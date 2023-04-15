@@ -5,14 +5,6 @@ const { withContentlayer } = require('next-contentlayer');
 const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
-    // Twitter Profile Picture
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'pbs.twimg.com',
-        pathname: '/**',
-      },
-    ],
   },
   experimental: {
     appDir: true,

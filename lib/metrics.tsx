@@ -42,7 +42,7 @@ export const getStarCount = cache(async () => {
 
   const req = await octokit.request('GET /repos/{owner}/{repo}', {
     owner: 'leerob',
-    repo: 'leerob.io',
+    repo: 'dataroc.ca',
   });
 
   return req.data.stargazers_count;
