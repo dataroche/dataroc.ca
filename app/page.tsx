@@ -30,7 +30,9 @@ export default async function HomePage() {
       <PageTitle>william laroche</PageTitle>
       <p><a className="dark:text-sky" href="#why-dataroc">(dataroc)</a></p>
       <p className="my-5">
-        Hey, I'm an electrical engineering graduate turned software dev. Currently building software to help local businesses build a sense of home and community <a className="dark:text-sky underline" href="https://thethirdplace.is" target="_blank">@thethirdplace</a>.
+        Hey, I'm an electrical engineering graduate turned software dev.
+        Currently building software to help local businesses build a sense
+        of home and community <a className="dark:text-sky underline" href="https://thethirdplace.is" target="_blank">@thethirdplace</a>.
       </p>
       <div className="flex items-start md:items-center my-8 flex-col md:flex-row">
         <Image
@@ -45,7 +47,7 @@ export default async function HomePage() {
           {/* <h2>Expertise</h2> */}
           <p>5+ years of backend <span className="dark:text-sky">Python</span> experience</p>
           <p>Business intelligence and analytics engineering</p>
-          <p>Algorithmic crypto trading using <a className="dark:text-sky underline" href="https://hummingbot.org/" target="_blank" rel="noopener noreferrer">Hummingbot</a></p>
+          <p>Algorithmic crypto trading using <a className="dark:text-sky underline" href="/projects">Hummingbot</a></p>
           {/* <a
             rel="noopener noreferrer"
             target="_blank"
@@ -93,14 +95,14 @@ export default async function HomePage() {
         Dataroc is a portmanteau of <span className="text-sky">data</span> and part of my last name, La<span className="text-sky">roc</span>he :-)
       </p>
       <h2 className="my-5" id="why-dataroc">
-        What is that robot avatar?
+        What is that avatar?
       </h2>
       <p>
-        The avatar is named SOLEnOID and is the result of the creative genius of @logicbeach.eth. It's the only NFT I possess, and proudly so!
-        You can find <a className="dark:text-sky" href="https://opensea.io/collection/logicbots-u1">the whole collection here</a>. It's also the inspiration of this website's color palette!
+        The avatar is named SOLEnOID and is the result of the creative genius of <a className="dark:text-sky underline" href="https://twitter.com/Logic_Beach">@logicbeach.eth</a>. It's the only NFT I possess, and proudly so!
+        You can find <a className="dark:text-sky underline" href="https://opensea.io/collection/logicbots-u1">the whole collection here</a>. It's also the inspiration of this website's color palette!
       </p>
       <hr className="my-10" />
-      <p className="italic font-light"><a className="dark:text-sky" href="https://github.com/dataroche/dataroc.ca">This website's source code</a> is freely available and is based on Lee Robinson's template</p>
+      <p className="italic font-light"><a className="dark:text-sky underline" href="https://github.com/dataroche/dataroc.ca">This website's source code</a> is freely available and is based on Lee Robinson's template. My way of thanking him is by hosting the website on his platform :-)</p>
     </section>
   );
 }

@@ -21,14 +21,16 @@ export default function UsesPage() {
         <p>
           Since the summer of 2022, I've been running grid bots and other market making bots for a steady stream of profits.
           The bots have a lower crypto exposure (beta) than a pure holding strategy, while still profiting from market volatility.
-          I've built an extensive ecosystem around my bot to visualize trading and profit from market conditions.
+          I've built an extensive ecosystem around hummingbot to visualize trading and profit from market conditions.
         </p>
         <p>Some highlights:</p>
         <ul>
           <li>A custom-built grid trading strategy that can run on any Hummingbot-supported connector</li>
           <li>Streamlit dashboard to monitor profits, visualize trades and run backtests</li>
-          <li>Real-time indexing of the BSC chain using <a href="https://ethereum-etl.readthedocs.io/en/latest/">Ethereum ETL</a> and TimescaleDB to compress and retain data</li>
-          <li>A backtesting processor to test profitability on of grid bots on Kraken and BSC</li>
+          <li>Real-time indexing of the BSC chain using <a href="https://ethereum-etl.readthedocs.io/en/latest/">Ethereum ETL</a> and
+            TimescaleDB to compress and retain data.<br />
+            <small>Did you know the BSC chain generates 12GB of data per day? 😱</small></li>
+          <li>A backtesting processor to test profitability of grid bots on Kraken and BSC</li>
         </ul>
       </div>
     </section>

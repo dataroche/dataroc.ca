@@ -9,7 +9,7 @@ const textFont = Fragment_Mono({ weight: '400', subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'William Laroche',
+    default: "William Laroche's Sandbox",
     template: '%s | William Laroche',
   },
   description: 'Developer, algorithmic trading enthusiast.',
