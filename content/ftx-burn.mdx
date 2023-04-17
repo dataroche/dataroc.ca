@@ -1,0 +1,71 @@
+---
+title: '28th of November 2021: The FTX burn'
+publishedAt: '2023-04-17'
+summary: 'On November 28 2021, one of my liquidity mining bot on AscendEx got solidly burned by my lack of protection around buy/sell prices. '
+---
+
+This a look back at a mishap that happened to me a year and a half ago. I hope you enjoy the read
+as much as I despised that moment (at the time) :-)
+
+## Liquidity Mining
+
+First, some context. Liquidity mining on Hummingbot is a program that allows you to reap
+in rewards based on how close your market orders (buy / sell) are to the mid price.
+These rewards are calculated on a minute-by-minute basis.
+
+Starting on October 17th 2021, I invested exactly $1323 and started trading on multiple
+trading pairs on AscendEx. Religiously tracking my daily returns, I was enjoying the
+steady gains. Some great days, some average days, but by the end I had a healthy 57%
+profit ($756). A consistent ~0.5% daily return.
+
+What I gradually realized was that the highest ROI trading pairs were the one with very
+low trading activity: you could set a market order ridiculously close to the mid price
+(less than 0.05% away) and just reap in the rewards. Almost no one was trading on the
+pair, so your market orders almost never got triggered. When they did, your trade loss
+(due to the trading fees being higher than your spread) would be offset by the
+rewards you had accumulated. 
+
+Here's how my returns looked like on November 28:
+
+<img src="/blog-images/ftx-burn-profits.png" alt="Liquidity Mining trading profits" />
+<small>My liquidity trading profits as of November 29th 2021. Starting funds: $1323. You might notice a slight drop by the end...</small>
+
+## The Burn: FTX/USDT trading pair
+
+I had started trading on the FTX/USDT pair a few days prior. It was doing OK, very few
+trades, tight spreads. 
+
+On November 28th, it so happens that I was looking at the order book at the end of
+the afternoon. I noticed something interesting: there were no ask orders. None. No one
+had any open orders to sell FTX. Being my naive self I thought: wow that's interesting.
+
+My bot was looking at a specific number to place orders: the mid price. I.e. half-way
+between the top bid and top ask. If the best ask is $20.01, and the best bid is $19.99,
+the mid price is $20.00. Easy enough.
+
+What happened next is that someone posted a market ask order at $1000. I saw it live.
+Essentially saying *"You know this token called FTX that just traded at $20.50? Well I'm
+happy to sacrifice myself and buy your tokens for the low price of $1000."*. You might
+see where this is going...
+
+What's the mid price when the best bid is $20 and the best ask $1000? **$490**. My bot being
+the clever thing it is, decided to do what it does best and post a great bid order at
+0.01% of the mid price: $489.51. Saying in return *"You think $1000 is a great price?
+Well then I don't mind buying FTX at $489.51 then."*
+
+<img src="/blog-images/ftx-burn-candles.png" alt="FTX/USDT candles around time of the incident" />
+<small>The daily FTX/USDT candles around November 2021. See that ridiculous high candle on Nov 28th? This is a log-scale by the way. But who could've bought FTX at such an awful price?</small>
+
+Then what had to happen happened: someone saw that, sold their tokens to my unsuspecting
+bot. And then my unsuspecting bot decided to open more buy orders because it still had
+USDT to spare!
+
+It took me about 20 seconds to realize what was happening and franctically stop my bot
+ASAP. By then, the damage was done and I was holding 2 FTX token worth around $40. I had
+payed close to $1000 for those.
+
+## The Fallout
+
+After that incident, I took a pause from liquidity mining. Came back some time later,
+but stopped participating in the Hummingbot Miner program and instead focused on other
+strategies.

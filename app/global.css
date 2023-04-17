@@ -13,7 +13,6 @@ html {
 
 h1 {
   @apply dark:text-sky font-bold text-3xl mb-5;
-  text-transform: lowercase;
   margin-bottom: 0em;
 }
 

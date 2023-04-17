@@ -6,7 +6,7 @@ export default async function sitemap() {
     lastModified: post.publishedAt,
   }));
 
-  const routes = ['', '/about', '/blog', '/uses'].map(
+  const routes = ['', '/about', '/blog', '/projects'].map(
     (route) => ({
       url: `https://dataroc.ca${route}`,
       lastModified: new Date().toISOString().split('T')[0],

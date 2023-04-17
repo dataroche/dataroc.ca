@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default async function BlogPage() {
   return (
     <section>
-      <PageTitle>Blog</PageTitle>
+      <PageTitle>blog</PageTitle>
       {allBlogs
         .sort((a, b) => {
           if (new Date(a.publishedAt) > new Date(b.publishedAt)) {
@@ -29,7 +29,7 @@ export default async function BlogPage() {
           >
             <div className="my-5 w-full flex flex-col">
               <p>{post.title}</p>
-              <ViewCounter slug={post.slug} trackView={false} />
+              <p className="italic">Posted on {post.publishedAt}</p>
             </div>
           </Link>
         ))}
