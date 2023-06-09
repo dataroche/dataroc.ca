@@ -16,6 +16,18 @@ const nextConfig = {
       return [];
     }
   },
+  rewrites() {
+    return [
+      {
+        source: "/api",
+        destination: process.env.REACT_APP_API_URL
+      },
+      {
+        source: "/api/:slug*",
+        destination: process.env.REACT_APP_API_URL + '/:slug*'
+      }
+    ]
+  },
   headers() {
     return [
       {

@@ -5,6 +5,7 @@ import {
   ArrowIcon,
 } from 'components/icons';
 import PageTitle from 'components/page-title';
+import PortfolioSummary from 'components/portfolio/portfolio-summary';
 import avatar from '../public/profile-square.jpg';
 
 export const revalidate = 60;
@@ -13,6 +14,7 @@ export default async function HomePage() {
 
   return (
     <section className="max-w-[600px]">
+      <PortfolioSummary />
       <PageTitle>william laroche</PageTitle>
       <p><a className="dark:text-sky" href="#why-dataroc">(dataroc)</a></p>
       <p className="my-5">
