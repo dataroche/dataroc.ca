@@ -8,6 +8,7 @@ const nextConfig = {
   },
   experimental: {
     appDir: true,
+    esmExternals: "loose"
   },
   redirects() {
     try {

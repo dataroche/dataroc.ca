@@ -1,10 +1,12 @@
 import { apiFetch } from "./api";
 
 import { camelizeKeys } from 'humps';
+import dayjs from 'dayjs';
 
 export interface PortfolioHistory {
     id: number,
     timestamp: number,
+    date: dayjs.Dayjs,
     market: string,
     interval: string,
     usdTotalValue: number,
@@ -28,6 +30,7 @@ export async function getPorfolioHistory(): Promise<PortfolioHistory[]> {
     return data.map((entry: PortfolioHistory) => {
         return {
             ...entry,
+            date: dayjs.unix(entry.timestamp),
             benchmarkPortfolioEthValue: benchmarkEthPortfolioMult * entry.benchmarkEthValue,
             benchmarkPortfolioBtcValue: benchmarkBtcPortfolioMult * entry.benchmarkBtcValue
         };

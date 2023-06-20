@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import PageTitle from 'components/page-title';
+import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link';
 
 export const metadata: Metadata = {
   title: 'Projects',
@@ -13,7 +14,8 @@ export default function UsesPage() {
     <section>
       <PageTitle>projects</PageTitle>
       <div className="prose prose-neutral dark:prose-invert">
-        <h2 id="computer-office">Automated Crypto Trading Bots</h2>
+        <h2>Automated Crypto Trading Bots</h2>
+        <PortfolioSummaryLink />
         <p>
           Started experimenting with liquidity mining on <a href="https://miner.hummingbot.io/">Hummingbot Miner</a> around October 2021.
           Iterations of custom bots built on top of the Pure Market Making strategy led to a steady 0.5% daily return. <a href="/blog/ftx-burn">Until getting burned on a faithful day...</a>

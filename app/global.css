@@ -80,6 +80,10 @@ p {
   animation: 1.06s blinker linear 3;
 }
 
+.highlight-box {
+  @apply border-solid border-sky rounded border-2 p-1.5 bg-gray-700 dark:text-neutral-200;
+}
+
 @keyframes blinker {
   0% {
     opacity: 1;
