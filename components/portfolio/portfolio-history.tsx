@@ -44,7 +44,7 @@ export default function PortfolioHistory() {
             <div className="flex flex-col bg-white w-72 highlight-box">
                 <div className="flex-1">{date}</div>
                 {slice.points.map((point) => (
-                    <div className="flex flex-row justify-between gap-5">
+                    <div className="flex flex-row justify-between gap-5" style={{ color: point.serieColor }}>
                         <div>{point.serieId}</div>
                         <div>${point.data.yFormatted}</div>
                     </div>
@@ -62,7 +62,7 @@ export default function PortfolioHistory() {
         return (
             <Line
                 theme={NIVO_THEME}
-                margin={{ top: 20, right: 20, bottom: 60, left: 80 }}
+                margin={{ top: 20, right: 20, bottom: 60, left: 60 }}
                 width={600}
                 height={500}
                 data={[

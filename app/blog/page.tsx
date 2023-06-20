@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { allBlogs } from 'contentlayer/generated';
-import ViewCounter from './view-counter';
 
 import PageTitle from 'components/page-title';
 

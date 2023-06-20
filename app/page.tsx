@@ -1,11 +1,9 @@
 import Image from 'next/image';
-// import { getBlogViews, getTweetCount, getStarCount } from 'lib/metrics';
-import {
-  ArrowIcon,
-} from 'components/icons';
 import PageTitle from 'components/page-title';
+import { LinkedInLink } from 'components/contact';
 import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link';
 import avatar from '../public/profile-square.jpg';
+
 
 export const revalidate = 60;
 
@@ -48,15 +46,7 @@ export default async function HomePage() {
           <PortfolioSummaryLink />
         </li>
         <li>
-          <a
-            className="flex items-center transition-all dark:text-sky hover:opacity-70"
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://www.linkedin.com/in/william-laroche/?locale=en_US"
-          >
-            <ArrowIcon />
-            <p className="h-7 dark:text-sky">linked in</p>
-          </a>
+          <LinkedInLink />
         </li>
       </ul>
       <p className="my-5">
@@ -76,7 +66,11 @@ export default async function HomePage() {
         You can find <a className="dark:text-sky underline" href="https://opensea.io/collection/logicbots-u1">the whole collection here</a>. It's also the inspiration of this website's color palette!
       </p>
       <hr className="my-10" />
-      <p className="italic font-light"><a className="dark:text-sky underline" href="https://github.com/dataroche/dataroc.ca">This website's source code</a> is freely available and is based on Lee Robinson's template. My way of thanking him is by hosting the website on his platform :-)</p>
+      <p className="italic font-light">
+        <a className="dark:text-sky underline" href="https://github.com/dataroche/dataroc.ca">This website's source code</a> is
+        freely available and is based on Lee Robinson's template.
+        My way of thanking him is by hosting the website on his platform :-)
+      </p>
     </section>
   );
 }

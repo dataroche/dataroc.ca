@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import { ContactParagraph } from 'components/contact';
 import PageTitle from 'components/page-title';
 import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link';
 
@@ -26,7 +27,7 @@ export default function UsesPage() {
           I've built an extensive ecosystem around hummingbot to visualize trading and profit from market conditions.
         </p>
         <p>Some highlights:</p>
-        <ul>
+        <ul className="marker:text-neutral-200">
           <li>A custom-built grid trading strategy that can run on any Hummingbot-supported connector</li>
           <li>Streamlit dashboard to monitor profits, visualize trades and run backtests</li>
           <li>Real-time indexing of the BSC chain using <a href="https://ethereum-etl.readthedocs.io/en/latest/">Ethereum ETL</a> and
@@ -34,6 +35,7 @@ export default function UsesPage() {
             <small>Did you know the BSC chain generates 12GB of data per day? 😱</small></li>
           <li>A backtesting processor to test profitability of grid bots on Kraken and BSC</li>
         </ul>
+        <ContactParagraph />
       </div>
     </section>
   );
