@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { allBlogs } from 'contentlayer/generated';
-import ViewCounter from './view-counter';
 
 import PageTitle from 'components/page-title';
 
@@ -27,7 +26,7 @@ export default async function BlogPage() {
             className="flex flex-col space-y-1 mb-4"
             href={`/blog/${post.slug}`}
           >
-            <div className="my-5 w-full flex flex-col">
+            <div className="w-full flex flex-col">
               <p>{post.title}</p>
               <p className="italic">Posted on {post.publishedAt}</p>
             </div>

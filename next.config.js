@@ -8,6 +8,7 @@ const nextConfig = {
   },
   experimental: {
     appDir: true,
+    esmExternals: "loose"
   },
   redirects() {
     try {
@@ -15,6 +16,18 @@ const nextConfig = {
     } catch {
       return [];
     }
+  },
+  rewrites() {
+    return [
+      {
+        source: "/api",
+        destination: process.env.REACT_APP_API_URL
+      },
+      {
+        source: "/api/:slug*",
+        destination: process.env.REACT_APP_API_URL + '/:slug*'
+      }
+    ]
   },
   headers() {
     return [

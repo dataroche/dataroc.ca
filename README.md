@@ -1,39 +1,39 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fleerob%2Fleerob.io)
-
 # dataroc.ca
 
 - **Framework**: [Next.js](https://nextjs.org/)
-- **Database**: [PlanetScale](https://planetscale.com)
-- **Authentication**: [NextAuth.js](https://next-auth.js.org)
+- **Database**: [PostgreSQL on fly.io](https://fly.io/docs/postgres/)
+- **API**: [PostgREST](https://postgrest.org/en/stable/)
+- **SQL Migrations**: [Graphile-Migrate](https://github.com/graphile/migrate)
 - **Deployment**: [Vercel](https://vercel.com)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com)
-- **Analytics**: [Vercel Analytics](https://vercel.com/analytics)
 
-## TODO
 
-In early 2023, I refactored my site to use the new `app/` directory in Next.js 13. I went ahead and shipped it, but there are still a few things I want to do:
+## Database initialization
 
-- [ ] Global `404` page coming soon
-- [ ] Move redirects to end of routing stack (not in `next.config.js`)
-- [ ] Use new support for API routes in `app` (not ready yet)
-- [ ] Improved scroll position support in `app/` (not implemented yet)
+Outside of migrations, a basic initialization of the postgres database is required. Replace passwords with generated random hashes:
 
-You can learn more about the `app/` directory [here](https://beta.nextjs.org/docs).
+```sql
+CREATE USER dataroc_admin WITH ENCRYPTED PASSWORD 'my-password';
 
-## Running Locally
+GRANT ALL ON SCHEMA public TO dataroc_admin;
 
-This application requires Node.js v16.13+.
+CREATE DATABASE dataroc;
+GRANT ALL PRIVILEGES ON DATABASE dataroc TO admin;
+GRANT ALL PRIVILEGES ON DATABASE dataroc TO dataroc_admin;
 
-```bash
-git clone https://github.com/leerob/dataroc.ca.git
-cd dataroc.ca
-pnpm install
-pnpm run setup # Remove all of my personal information
-pnpm dev
+CREATE DATABASE dataroc_shadow;
+GRANT ALL PRIVILEGES ON DATABASE dataroc_shadow TO admin;
+GRANT ALL PRIVILEGES ON DATABASE dataroc_shadow TO dataroc_admin;
+
+DROP ROLE IF EXISTS authenticator;
+CREATE ROLE authenticator LOGIN NOINHERIT NOCREATEDB NOCREATEROLE NOSUPERUSER;
+ALTER USER authenticator PASSWORD 'my-authenticator-password';
+
 ```
+Then, connect to the dataroc database and create the anonymous user for PostgREST:
 
-Create a `.env` file similar to [`.env.example`](https://github.com/leerob/dataroc.ca/blob/main/.env.example).
-
-## Cloning / Forking
-
-Please review the [license](https://github.com/leerob/dataroc.ca/blob/main/LICENSE.txt) and remove all of my personal information (resume, blog posts, images, etc.) by running `pnpm run setup`.
+```sql
+\c dataroc
+CREATE ROLE api_anon nologin;
+GRANT api_anon TO authenticator;
+```

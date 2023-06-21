@@ -1,11 +1,9 @@
-import Link from 'next/link';
 import Image from 'next/image';
-// import { getBlogViews, getTweetCount, getStarCount } from 'lib/metrics';
-import {
-  ArrowIcon,
-} from 'components/icons';
 import PageTitle from 'components/page-title';
+import { LinkedInLink } from 'components/contact';
+import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link';
 import avatar from '../public/profile-square.jpg';
+
 
 export const revalidate = 60;
 
@@ -13,9 +11,16 @@ export default async function HomePage() {
 
   return (
     <section className="max-w-[600px]">
-      <PageTitle>william laroche</PageTitle>
-      <p><a className="dark:text-sky" href="#why-dataroc">(dataroc)</a></p>
-      <p className="my-5">
+      <PageTitle subTitle={(
+        <p>
+          <a className="dark:text-sky" href="#why-dataroc">
+            (dataroc)
+          </a>
+        </p>
+      )}>
+        william laroche
+      </PageTitle>
+      <p className="mb-5">
         Hey, I'm an electrical engineering graduate turned software dev.
         Currently building software to help local businesses build a sense
         of home and community <a className="dark:text-sky underline" href="https://thethirdplace.is" target="_blank">@thethirdplace</a>.
@@ -36,21 +41,16 @@ export default async function HomePage() {
           <p>Algorithmic crypto trading using <a className="dark:text-sky underline" href="/projects">Hummingbot</a></p>
         </div>
       </div>
-      <ul className="flex flex-col md:flex-row mt-8 space-x-0 md:space-x-4 space-y-2 md:space-y-0 font-sm text-neutral-500 dark:text-sky hover:opacity-70">
+      <ul className="flex flex-col items-center md:flex-row gap-2 mt-8 space-x-0 md:space-x-4 space-y-2 md:space-y-0 font-sm text-neutral-500 ">
         <li>
-          <a
-            className="flex items-center transition-all "
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://www.linkedin.com/in/william-laroche/?locale=en_US"
-          >
-            <ArrowIcon />
-            <p className="h-7 dark:text-sky">linked in</p>
-          </a>
+          <PortfolioSummaryLink />
+        </li>
+        <li>
+          <LinkedInLink />
         </li>
       </ul>
       <p className="my-5">
-        When I'm not "coding", I'm probably playing volley ball 🏐, dancing salsa 🕺, but (who am I kidding) I'm probably coding. I love to travel, meet new people and experience extraordinary food. Next up: Denmark!
+        When I'm not coding, I'm probably playing volley ball 🏐, dancing salsa 🕺, but (who am I kidding) I'm probably coding. I love to travel, meet new people and experience extraordinary food. Next up: Denmark!
       </p>
       <h2 className="my-5" id="why-dataroc">
         Why dataroc?
@@ -66,7 +66,11 @@ export default async function HomePage() {
         You can find <a className="dark:text-sky underline" href="https://opensea.io/collection/logicbots-u1">the whole collection here</a>. It's also the inspiration of this website's color palette!
       </p>
       <hr className="my-10" />
-      <p className="italic font-light"><a className="dark:text-sky underline" href="https://github.com/dataroche/dataroc.ca">This website's source code</a> is freely available and is based on Lee Robinson's template. My way of thanking him is by hosting the website on his platform :-)</p>
+      <p className="italic font-light">
+        <a className="dark:text-sky underline" href="https://github.com/dataroche/dataroc.ca">This website's source code</a> is
+        freely available and is based on Lee Robinson's template.
+        My way of thanking him is by hosting the website on his platform :-)
+      </p>
     </section>
   );
 }
