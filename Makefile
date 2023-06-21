@@ -13,3 +13,6 @@ postgrest:
 		-e PGRST_DB_SCHEMA=api \
 		-e PGRST_DB_ANON_ROLE=api_anon \
 		postgrest/postgrest
+
+postgres-prod-proxy:
+	fly proxy 15432:5432 -a dataroc-db
