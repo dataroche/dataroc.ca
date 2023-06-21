@@ -20,7 +20,7 @@ export interface PortfolioHistory {
 
 export async function getPorfolioHistory(): Promise<PortfolioHistory[]> {
     const response = await apiFetch('GET', '/portfolio_history', {});
-    const data: any[] = camelizeKeys(response.data);
+    const data = camelizeKeys(response.data);
 
     const portfolioBaselineValue = data && data[0].usdTotalValue;
 

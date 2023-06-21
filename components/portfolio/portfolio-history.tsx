@@ -6,10 +6,8 @@ import { Line } from '@nivo/line'
 // import { ResponsiveContainer, LineChart, Line, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, } from 'recharts';
 
 import { getPorfolioHistory, PortfolioHistory } from "lib/api/portfolioHistory";
-import dayjs from 'dayjs';
-import { text } from 'stream/consumers';
 
-import { theme } from "tailwind.config";
+import colors from 'tailwindcss/colors';
 
 const NIVO_THEME = {
     axis: {
@@ -18,12 +16,12 @@ const NIVO_THEME = {
                 strokeWidth: 0
             },
             text: {
-                fill: theme.colors.gray["300"]
+                fill: colors.gray["300"]
             }
         },
         legend: {
             text: {
-                fill: theme.colors.gray["300"]
+                fill: colors.gray["300"]
             }
         }
 
