@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import PageTitle from 'components/page-title';
-import { LinkedInLink } from 'components/contact';
+import { ContactParagraph } from 'components/contact';
 import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link';
 import avatar from '../public/profile-square.jpg';
 
@@ -25,30 +25,25 @@ export default async function HomePage() {
         Currently building software to help local businesses build a sense
         of home and community <a className="dark:text-sky underline" href="https://thethirdplace.is" target="_blank">@thethirdplace</a>.
       </p>
-      <div className="flex items-start md:items-center my-8 flex-col md:flex-row">
-        <Image
-          alt="Picture of William Laroche"
-          className="rounded-full"
-          src={avatar}
-          placeholder="blur"
-          width={100}
-          priority
-        />
-        <div className="mt-8 md:mt-0 ml-0 md:ml-6 space-y-2 text-neutral-500 dark:text-neutral-400">
-          {/* <h2>Expertise</h2> */}
-          <p>5+ years of backend <span className="dark:text-sky">Python</span> experience</p>
-          <p>Business intelligence and analytics engineering</p>
-          <p>Algorithmic crypto trading using <a className="dark:text-sky underline" href="/projects">Hummingbot</a></p>
+      <div className="flex items-center my-8 flex-row">
+        <div className="space-y-2 text-neutral-500 dark:text-neutral-400">
+          <ul className="flex flex-row items-center gap-2 space-x-4 space-y-0 font-sm text-neutral-500 ">
+            <li>
+              <PortfolioSummaryLink />
+            </li>
+          </ul>
         </div>
+
+        <span className="mx-4 inline text-neutral-500 dark:text-neutral-200">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6  inline">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+        </span>
+        <p className="text-sm">
+          Can I beat the market?
+        </p>
+
       </div>
-      <ul className="flex flex-col items-center md:flex-row gap-2 mt-8 space-x-0 md:space-x-4 space-y-2 md:space-y-0 font-sm text-neutral-500 ">
-        <li>
-          <PortfolioSummaryLink />
-        </li>
-        <li>
-          <LinkedInLink />
-        </li>
-      </ul>
       <p className="my-5">
         When I'm not coding, I'm probably playing volley ball 🏐, dancing salsa 🕺, but (who am I kidding) I'm probably coding. I love to travel, meet new people and experience extraordinary food. Next up: Denmark!
       </p>
@@ -65,8 +60,9 @@ export default async function HomePage() {
         The avatar is named SOLeNOID and is the result of the creative genius of <a className="dark:text-sky underline" href="https://twitter.com/Logic_Beach">@logicbeach.eth</a>. It's the only NFT I possess, and proudly so!
         You can find <a className="dark:text-sky underline" href="https://opensea.io/collection/logicbots-u1">the whole collection here</a>. It's also the inspiration of this website's color palette!
       </p>
-      <hr className="my-10" />
-      <p className="italic font-light">
+      <hr className="mt-10" />
+      <ContactParagraph />
+      <p className="text-sm mt-4">
         <a className="dark:text-sky underline" href="https://github.com/dataroche/dataroc.ca">This website's source code</a> is
         freely available and is based on Lee Robinson's template.
         My way of thanking him is by hosting the website on his platform :-)
