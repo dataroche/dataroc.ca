@@ -3,6 +3,8 @@ import dayjs from "dayjs";
 
 export type Method = "GET" | "POST" | "PUT" | "DELETE";
 
+const RETRY_WAIT = 1500;
+
 /**
  *
  * @param {Method} method
@@ -10,11 +12,21 @@ export type Method = "GET" | "POST" | "PUT" | "DELETE";
  * @param {Record<string, any>} data
  * @returns
  */
-export async function apiFetch(method: Method, path: string, data: Record<string, any>) {
-    return await axios({
-        data,
-        headers: {},
-        method,
-        url: '/api' + path,
-    });
+export async function apiFetch(method: Method, path: string, data: Record<string, any>, retry: number = 3) {
+    try {
+        return await axios({
+            data,
+            headers: {},
+            method,
+            url: '/api' + path,
+        });
+    } catch (e) {
+        if (retry > 0) {
+            await new Promise(r => setTimeout(r, RETRY_WAIT));
+            return await apiFetch(method, path, data, retry - 1);
+        } else {
+            throw e;
+        }
+
+    }
 }
