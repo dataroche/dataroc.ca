@@ -1,8 +1,7 @@
 import Image from 'next/image';
 import PageTitle from 'components/page-title';
-import { ContactParagraph } from 'components/contact';
+import { ContactParagraph, LinkedInLink } from 'components/contact';
 import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link';
-import avatar from '../public/profile-square.jpg';
 
 
 export const revalidate = 60;
@@ -12,11 +11,15 @@ export default async function HomePage() {
   return (
     <section className="max-w-[600px]">
       <PageTitle subTitle={(
-        <p>
-          <a className="dark:text-sky" href="#why-dataroc">
-            (dataroc)
-          </a>
-        </p>
+        <span className="flex flex-row gap-5">
+          <p>
+            <a className="dark:text-sky hover:opacity-70" href="#why-dataroc">
+              (dataroc)
+            </a>
+
+          </p>
+          <LinkedInLink />
+        </span>
       )}>
         william laroche
       </PageTitle>
