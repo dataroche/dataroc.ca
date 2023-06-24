@@ -36,4 +36,7 @@ Then, connect to the dataroc database and create the anonymous user for PostgRES
 \c dataroc
 CREATE ROLE api_anon nologin;
 GRANT api_anon TO authenticator;
+
+CREATE ROLE api_data_producer nologin;
+GRANT api_data_producer TO authenticator;
 ```

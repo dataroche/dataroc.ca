@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 
 export interface PortfolioHistory {
     id: number,
-    timestamp: number,
+    timestampS: number,
     date: dayjs.Dayjs,
     market: string,
     interval: string,
@@ -30,7 +30,7 @@ export async function getPorfolioHistory(): Promise<PortfolioHistory[]> {
     return data.map((entry: PortfolioHistory) => {
         return {
             ...entry,
-            date: dayjs.unix(entry.timestamp),
+            date: dayjs.unix(entry.timestampS),
             benchmarkPortfolioEthValue: benchmarkEthPortfolioMult * entry.benchmarkEthValue,
             benchmarkPortfolioBtcValue: benchmarkBtcPortfolioMult * entry.benchmarkBtcValue
         };

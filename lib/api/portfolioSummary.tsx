@@ -4,7 +4,7 @@ import { camelizeKeys } from 'humps';
 
 export interface PortfolioSummary {
     id: number,
-    timestamp: number,
+    timestamp_s: number,
     market: string,
     interval: string,
     usdTotalValue: number,

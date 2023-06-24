@@ -1,0 +1,19 @@
+[tool.black]
+line-length = 120
+
+[tool.poetry]
+name = "dataroc"
+version = "0.1.0"
+description = "Python client for dataroc.ca"
+authors = ["dataroc"]
+readme = "README.md"
+include = ["dataroc_client.py"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+PyJWT = ">=2.0.0"
+postgrest-py = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
