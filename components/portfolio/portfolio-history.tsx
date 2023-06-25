@@ -59,7 +59,7 @@ export default function PortfolioHistory() {
         return (
             <Line
                 theme={NIVO_THEME}
-                margin={{ top: 20, right: 20, bottom: 60, left: 60 }}
+                margin={{ top: 20, right: 40, bottom: 30, left: 60 }}
                 width={600}
                 height={500}
                 data={[
@@ -90,13 +90,12 @@ export default function PortfolioHistory() {
                     max: "auto"
                 }}
                 axisLeft={{
-                    legend: '$USD',
                     legendOffset: -55,
+                    format: "$.0f"
                 }}
                 axisBottom={{
                     format: '%b %Y',
                     tickValues: 'every 2 months',
-                    legend: 'Date',
                     legendOffset: 35,
                 }}
                 useMesh={true}
