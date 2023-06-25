@@ -51,10 +51,9 @@ export default function PortfolioHistory() {
         )
     }
 
-    const usdTotalValue = portfolioHistory.map(entry => ({ x: entry.date.format("YYYY-MM-DD"), y: entry.usdTotalValue.toFixed(0) }));
-    const benchmarkPortfolioBtcValue = portfolioHistory.map(entry => ({ x: entry.date.format("YYYY-MM-DD"), y: entry.benchmarkPortfolioBtcValue.toFixed(0) }));
-    const benchmarkPortfolioEthValue = portfolioHistory.map(entry => ({ x: entry.date.format("YYYY-MM-DD"), y: entry.benchmarkPortfolioEthValue.toFixed(0) }));
-
+    const usdTotalValue = portfolioHistory.map(entry => ({ x: entry.dateStr, y: entry.usdTotalValue.toFixed(0) }));
+    const benchmarkPortfolioBtcValue = portfolioHistory.map(entry => ({ x: entry.dateStr, y: entry.benchmarkPortfolioBtcValue.toFixed(0) }));
+    const benchmarkPortfolioEthValue = portfolioHistory.map(entry => ({ x: entry.dateStr, y: entry.benchmarkPortfolioEthValue.toFixed(0) }));
 
     const Chart = () => {
         return (
