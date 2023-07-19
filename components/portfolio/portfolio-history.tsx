@@ -28,7 +28,16 @@ const NIVO_THEME = {
     },
 }
 
-export default function PortfolioHistory() {
+type Marker = {
+    date: string,
+    description: string,
+};
+
+type Props = {
+    notes: Marker[]
+}
+
+export default function PortfolioHistory({ notes = [] }: Props) {
 
     const [portfolioHistory, setPortfolioHistory] = useState<PortfolioHistory[]>([]);
 
@@ -102,6 +111,16 @@ export default function PortfolioHistory() {
                 enableSlices="x"
                 colors={{ scheme: "category10" }}
                 sliceTooltip={tooltipFormatter}
+                markers={notes.map(note => ({
+                    axis: 'x',
+                    value: new Date(note.date),
+                    lineStyle: { stroke: '#93fee2', strokeWidth: 1 },
+                    textStyle: {
+                        fill: '#93fee2',
+                        fontSize: 'smaller'
+                    },
+                    legend: note.description,
+                }))}
             />
         )
     }

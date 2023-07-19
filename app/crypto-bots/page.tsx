@@ -3,6 +3,16 @@ import { ContactParagraph } from 'components/contact';
 import PortfolioHistory from 'components/portfolio/portfolio-history';
 
 export default function UsesPage() {
+  const notes = [
+    {
+      date: '2023-05-29', title: '1', text: 'Attempted a new strategy with poor results in the following 2 weeks.',
+    }, {
+      date: '2023-06-26', title: '2', text: 'At this moment, only ETH-USD grid bot is active. This translates to a simple 30% market exposure up and down.'
+    }, {
+      date: '2023-07-19', title: '3', text: 'Noticed price oracle for ETH-USD had been reporting prices about 25% under their real value for 1 month or so. Reporting for portfolio value only changed here which explains the sudden rise.'
+    }
+  ]
+
   return (
     <section className="max-w-[600px]">
       <PageTitle subTitle={<p className="italic">Updated daily</p>}>Crypto bots performance</PageTitle>
@@ -19,7 +29,12 @@ export default function UsesPage() {
           Weekly performance history
         </h2>
         <div className="prose prose-neutral dark:prose-invert">
-          <PortfolioHistory />
+          <PortfolioHistory notes={notes.map(({ date, title }) => ({ date, description: title }))} />
+        </div>
+        <div className="text-xs">
+          {notes.map(note => (
+            <p id={note.date}><span className="text-sky text-[0.8em] mr-2 align-super">{note.title}</span>{note.text}</p>
+          ))}
         </div>
         <h2 className="my-5">
           Want to see more?
