@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import PageTitle from 'components/page-title';
 import { ContactParagraph, LinkedInLink } from 'components/contact';
 import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link';

@@ -20,7 +20,7 @@ export interface PortfolioHistory {
     benchmarkBtcValue: number,
     benchmarkPortfolioEthValue: number
     benchmarkPortfolioBtcValue: number
-};
+}
 
 export async function getPorfolioHistory(): Promise<PortfolioHistory[]> {
     const response = await apiFetch('GET', '/portfolio_history', {});

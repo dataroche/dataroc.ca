@@ -22,4 +22,4 @@ export function ContactParagraph() {
             For questions, inquiries or good old chit-chat, reach out on <LinkedInLink />
         </p>
     )
-};
+}

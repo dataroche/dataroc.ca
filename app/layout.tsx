@@ -1,5 +1,4 @@
 import './global.css';
-import clsx from 'clsx';
 import type { Metadata } from 'next';
 import { Fragment_Mono } from 'next/font/google';
 import Sidebar from '../components/sidebar';

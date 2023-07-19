@@ -10,7 +10,7 @@ export interface PortfolioSummary {
     usdTotalValue: number,
     usdHeld: number,
     intervalPctReturn: number,
-};
+}
 
 export async function getPortfolioSummary(): Promise<PortfolioSummary> {
     const response = await apiFetch('GET', '/portfolio_summary', {});

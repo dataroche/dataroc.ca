@@ -19,4 +19,4 @@ export default function PageTitle({ children, subTitle }: Props) {
             {subTitle}
         </div>
     )
-};
+}
