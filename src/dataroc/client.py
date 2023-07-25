@@ -3,6 +3,7 @@ import math
 from typing import Any, Optional, List, Union
 import jwt
 import postgrest
+from postgrest import APIError
 
 import dataroc.types
 
@@ -17,7 +18,14 @@ class DatarocClient:
         self.target_url = target_url
         self.role = role
         headers = {"Authorization": f"Bearer {generate_jwt(target_url, role, jwt_secret=jwt_secret)}"}
-        self.client = postgrest.SyncPostgrestClient(self.target_url, schema="api", headers=headers)
+        self.client = postgrest.SyncPostgrestClient(self.target_url, schema="api", headers=headers, timeout=60)
+        self._wake()
+
+    def _wake(self):
+        try:
+            self.client.from_table("portfolio_history").select("*").limit(1).execute()
+        except APIError:
+            pass
 
     def read_portfolio_histories(
         self, market: dataroc.types.MarketEnum, interval: dataroc.types.IntervalEnum
