@@ -23,7 +23,7 @@ export interface PortfolioHistory {
 }
 
 export async function getPorfolioHistory(): Promise<PortfolioHistory[]> {
-    const response = await apiFetch('GET', '/portfolio_history', {});
+    const response = await apiFetch('GET', '/portfolio_history?order=timestamp_s.asc', {});
     const data = camelizeKeys(response.data);
 
     const portfolioBaselineValue = data && data[0].usdTotalValue;
