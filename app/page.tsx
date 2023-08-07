@@ -23,7 +23,9 @@ export default async function HomePage() {
         william laroche
       </PageTitle>
       <p className="mb-5">
-        Hey, I'm an electrical engineering graduate turned software dev.
+        Software developer, data enthousiast and past entrepreneur with a history of
+        solving complex problems with elegant, scalable solutions.
+        My core coding principles: decoupling, reusability and quality.
         Currently building software to help local businesses build a sense
         of home and community <a className="dark:text-sky underline" href="https://thethirdplace.is" target="_blank">@thethirdplace</a>.
       </p>
