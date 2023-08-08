@@ -32,10 +32,10 @@ The data was collected over 2 days on 5 symbols: **AAVE/USDT**, **BTC/USDT**,
 
 ## Initial analysis
 
-The initial analysis was meant to identify zones of relevant information. High activity,
+The initial analysis was meant to identify zones of relevant information. E.g. high activity,
 or specific exchange behavior, throughout the dataset's duration.
 
-For this purpose, the last price per symbol per exchange is downsampled to 5 minute intervals. Here is BTC/USDT as an example:
+For this overview purpose, the last price per symbol per exchange is downsampled to 5 minute intervals. Here is BTC/USDT as an example:
 
 <img src="/images/realtime-aggregate/btc_usdt_overview.png" alt="BTC/USDT last price accross 5 exchanges over 2 days" />
 <small>BTC/USDT last price accross 5 exchanges over 2 days. Downsampled to 5 minutes intervals.</small>
@@ -47,7 +47,7 @@ For this purpose, the last price per symbol per exchange is downsampled to 5 min
 ### (1) Latency varies by exchange, DB insertion could use some optimization
 
 Latency depends heavily on the physical distance to the exchange's servers. I
-anticipated North American exchanges to be quicker (Kraken, Coinbase Crypto.com), as the
+anticipated North American exchanges to be quicker (Kraken, Coinbase & Crypto.com), as the
 script was running on my local network here in eastern Canada. As a tooling experiment, I measured 2 latencies: 
 
 1. the latency between the timestamp provided by the server and when the script received the websocket message
@@ -55,7 +55,7 @@ script was running on my local network here in eastern Canada. As a tooling expe
 
 #### 1. Exchange latency
 
-The first latency checks the reliability of each exchanges at delivering updates and the
+The first latency checks the reliability of each exchanges at delivering updates, and the
 floor network latency. There isn't much that can be done here to improve the
 performance. However, including the latency in an eventual true mid/last price might be
 beneficial.
@@ -67,17 +67,18 @@ One interesting experiment would be to compare websocket message timestamps with
 historical data timestamps. Are the websocket timestamps delayed versus what exchanges
 store as historical data? 
 
-For example, bitmart and kraken shows that the exchange latency is at a median of 1ms. I
+For example, Bitmart and Kraken show that the exchange latency is at a median of 1ms. I
 find it highly unlikely to receive messages on my local network with such ridiculously
 low latency.
 
 #### 2. Database insertion latency
 
 The second latency is an experiment on the floor latency to expect between end-client
-and an eventual API that serves this data. There doesn't seem to be a correlation
-between market activity and db insertion performance. Instead, it an overall
-optimization would be in order to reduce the 95th percentile and max values that are
-unnaceptably high at over 100ms.
+and an eventual API that serves this data. 
+
+There doesn't seem to be a correlation between market activity and DB insertion
+performance. Instead, it seems an overall optimization would be in order to reduce the
+95th percentile and max values that are unnaceptably high at over 100ms.
 
 <img src="/images/realtime-aggregate/db_insertion_latency.png" alt="Database insertion latency over time" />
 <small>Latency median, 95th percentile and max over time in 10 minute buckets.</small>
@@ -91,8 +92,14 @@ because the last price trails the actual exchange's order book.
 Although no trades happen, the market bid/ask orders are moving around as market makers
 adjust their spreads. Take a look at binanceus with CRV/USDT:
 
-<img src="/images/realtime-aggregate/crv_usdt_binanceus_jumps.png" alt="CRV/USDT shows how a low activity exchange has a trailing last price" />
-<small>Notice how binanceus last price is static for long periods of time</small>
+<img src="/images/realtime-aggregate/crv_usdt_binanceus_jumps.png" alt="CRV/USDT shows
+how a low activity exchange has a trailing last price" />
+<small>Notice how binanceus last price is static for long periods of time, and then
+"corrects" itself to the mean of other exchanges at that moment.</small>
+
+When trades happen on binanceus, they simply adjust to the current approximate mean
+price of other exchanges. Most likely than not, the spreads are continuously following
+the true price even though no trades happen.
 
 ### (3) Cryto.com websockets were disconnected
 
@@ -101,6 +108,8 @@ monitoring during the data collection of this experiment. It might be wise to ha
 fallback sockets, and obviously automated reconnection mechanisms.
 
 ## Computing a "true" last price
+
+Onto the meat of the experiment!
 
 A possible "true" last price was computed here using a weighted average. I focused my
 efforts on a small window with high volatility on the CRV/USDT symbol. 
@@ -111,14 +120,15 @@ The weights of each connector was computed using the whole dataset[^2]. The logi
 2. We remove any 0 diff updates (some exchanges send updates regardless, others don't)
 3. The weight of the exchange is the inverse of the variance of the absolute values of those diffs
 
-The rationale is that an exchange with many small changes will have a small variance (bigger weight). An
-exchange with rarer big changes will have a higher variance (smaller weight).
+The rationale is that an exchange with many tight trades will have a small variance (bigger weight). An
+exchange with sparser, wider trades will have a higher variance (smaller weight).
 
 <img src="/images/realtime-aggregate/crv_usdt_true_price.png" alt="CRV/USDT computed true last price" />
 <small>The "true" last price of CRV/USDT in a one hour window with high volatility</small>
 
-I highly recommend you explore this graph interactively and look at how the true price
-behaves when there are sharp movements.
+I highly recommend you [explore this
+ graph](https://github.dataroc.ca/blog_post_connectors_latency_and_true_price)
+interactively and look at how the true price behaves when there are sharp movements.
 
 [^2]: In a real-time application the weights could be updated at a regular interval like
 one hour using trailing data from the last week.
