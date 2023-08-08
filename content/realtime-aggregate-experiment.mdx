@@ -1,0 +1,139 @@
+---
+title: 'Towards the true, real-time price of crypto tokens'
+publishedAt: '2023-08-07'
+summary: 'Part 1 in a series looking at the feasability of a real-time price aggregate of multiple crypto exchanges.'
+---
+
+I've recently been looking into the feasability of a small API to continuously aggregate
+the prices of symbols accross multiple crypto exchanges. I often find myself trading on
+lower liquidity exchanges to profit from wider spreads, but that brings the challenge of
+knowing what is the "true" price of the symbol I'm trading. 
+
+Public aggregator services usually have strict rate-limiting, and even when paying for a
+premium service latencies are sub-optimal. For example, CoinGecko claims a 5 second
+latency for its highest priced tier.
+
+Read on to explore the feasability of collecting real-time data in order to provide an
+aggregated true price!
+
+The notebook used to generate the graphs in this post can be 
+[interactively explored here](https://github.dataroc.ca/blog_post_connectors_latency_and_true_price).
+
+## Data collection
+
+This experiment uses CCXT and its `watch_ticker` websocket endpoint to stream the last
+price. The frequency of updates depends on the exchange itself. In a subsequent post,
+I'll dig into using the mid price from the order book streams as an aggregate price.
+
+The data was collected over 2 days on 5 symbols: **AAVE/USDT**, **BTC/USDT**,
+**COMP/USDT**, **CRV/USDT** and **ETH/USDT**. These symbols were picked semi-arbitrarily
+(ETH, BTC and 3 smaller-cap tokens). You can download the input data
+[here](https://github.dataroc.ca/conector_latency_and_true_price.parquet).
+
+## Initial analysis
+
+The initial analysis was meant to identify zones of relevant information. High activity,
+or specific exchange behavior, throughout the dataset's duration.
+
+For this purpose, the last price per symbol per exchange is downsampled to 5 minute intervals. Here is BTC/USDT as an example:
+
+<img src="/images/realtime-aggregate/btc_usdt_overview.png" alt="BTC/USDT last price accross 5 exchanges over 2 days" />
+<small>BTC/USDT last price accross 5 exchanges over 2 days. Downsampled to 5 minutes intervals.</small>
+
+[You can interactively explore these graphs here](https://github.dataroc.ca/blog_post_connectors_latency_and_true_price)
+
+### (1) Latency varies by exchange, DB insertion could use some optimization
+
+Latency depends heavily on the physical distance to the exchange's servers. I
+anticipated North American exchanges to be quicker (Kraken, Coinbase Crypto.com), as the
+script was running on my local network here in eastern Canada. As a tooling experiment, I measured 2 latencies: 
+
+1. the latency between the timestamp provided by the server[^1] and when the script received the websocket message
+2. the latency between the message reception and the insertion timestamp in a TimescaleDB database
+
+#### 1. Exchange latency
+
+The first latency checks the reliability of each exchanges at delivering updates and the
+floor network latency. There isn't much that can be done here to improve the
+performance. However, including the latency in an eventual true mid/last price might be
+beneficial.
+
+<img src="/images/realtime-aggregate/fetch_latency_by_connector.png" alt="Fetch latency by connector" />
+<small>The latency between exchange-stamped timestamp and the timestamp at which the message was received.</small>
+
+One interesting experiment would be to compare websocket message timestamps with
+historical data timestamps. Are the websocket timestamps delayed versus what exchanges
+store as historical data? 
+
+For example, bitmart and kraken shows that the exchange latency is at a median of 1ms. I
+find it highly unlikely to receive messages on my local network with such ridiculously
+low latency.
+
+#### 2. Database insertion latency
+
+The second latency is an experiment on the floor latency to expect between end-client
+and an eventual API that serves this data. There doesn't seem to be a correlation
+between market activity and db insertion performance. Instead, it an overall
+optimization would be in order to reduce the 95th percentile and max values that are
+unnaceptably high at over 100ms.
+
+<img src="/images/realtime-aggregate/db_insertion_latency.png" alt="Database insertion latency over time" />
+<small>Latency median, 95th percentile and max over time in 10 minute buckets.</small>
+
+### (2) Last price is a trailing price
+
+One immediately obvious issue is that exchanges with low trading activity boast
+a last price that can be far from the apparent price of the market as a whole. This is
+because the last price trails the actual exchange's order book. 
+
+Although no trades happen, the market bid/ask orders are moving around as market makers
+adjust their spreads. Take a look at binanceus with CRV/USDT:
+
+<img src="/images/realtime-aggregate/crv_usdt_binanceus_jumps.png" alt="CRV/USDT shows how a low activity exchange has a trailing last price" />
+<small>Notice how binanceus last price is static for long periods of time</small>
+
+### (3) Cryto.com websockets were disconnected
+
+Cryto.com only has data for CRV/USDT for about 6 hours. There were no retries nor
+monitoring during the data collection of this experiment. It might be wise to have
+fallback sockets, and obviously automated reconnection mechanisms.
+
+## Computing a "true" last price
+
+A possible "true" last price was computed here using a weighted average. I focused my
+efforts on a small window with high volatility on the CRV/USDT symbol. 
+
+The weights of each connector was computed using the whole dataset[^2]. The logic is simple and not optimized: 
+
+1. We compute the change in price between successive updates of each exchange
+2. We remove any 0 diff updates (some exchanges send updates regardless, others don't)
+3. The weight of the exchange is the inverse of the variance of the absolute values of those diffs
+
+The rationale is that an exchange with many small changes will have a small variance (bigger weight). An
+exchange with rarer big changes will have a higher variance (smaller weight).
+
+<img src="/images/realtime-aggregate/crv_usdt_true_price.png" alt="CRV/USDT computed true last price" />
+<small>The "true" last price of CRV/USDT in a one hour window with high volatility</small>
+
+I highly recommend you explore this graph interactively and look at how the true price
+behaves when there are sharp movements.
+
+[^2]: In a real-time application the weights could be updated at a regular interval like
+one hour using trailing data from the last week.
+
+## Next steps
+
+The major shortfall of the experiment presented here is in the usage of the last price
+instead of using the bid/ask of each exchange. The next iteration will definitely use
+the mid price as a basis for calculation, as it provides many advantages:
+
+- No lag between what the market makers think the price is versus the last price
+- The spread and frequency of trades is a better exchange weighing indicator than an
+  arbitrary variance-based calculation
+
+Moreover, adding trades data would provide the volume as an additionnal weighing
+indicator: the more volume an exchange has, the higher its impact on the true price.
+
+## Other ideas
+
+- De-crossing pairs to compute a true price accross USD-USDT pairs for example
