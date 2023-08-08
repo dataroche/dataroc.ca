@@ -42,13 +42,15 @@ For this purpose, the last price per symbol per exchange is downsampled to 5 min
 
 [You can interactively explore these graphs here](https://github.dataroc.ca/blog_post_connectors_latency_and_true_price)
 
+## Observations
+
 ### (1) Latency varies by exchange, DB insertion could use some optimization
 
 Latency depends heavily on the physical distance to the exchange's servers. I
 anticipated North American exchanges to be quicker (Kraken, Coinbase Crypto.com), as the
 script was running on my local network here in eastern Canada. As a tooling experiment, I measured 2 latencies: 
 
-1. the latency between the timestamp provided by the server[^1] and when the script received the websocket message
+1. the latency between the timestamp provided by the server and when the script received the websocket message
 2. the latency between the message reception and the insertion timestamp in a TimescaleDB database
 
 #### 1. Exchange latency
