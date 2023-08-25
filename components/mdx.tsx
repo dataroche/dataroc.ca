@@ -3,6 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useMDXComponent } from 'next-contentlayer/hooks';
 
+import StaticPlotlyChart from './static-plotly-chart';
+
 const CustomLink = (props) => {
   const href = props.href;
 
@@ -94,6 +96,7 @@ const components = {
   Callout,
   ProsCard,
   ConsCard,
+  StaticPlotlyChart
 };
 
 interface MdxProps {

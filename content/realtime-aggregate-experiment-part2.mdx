@@ -1,0 +1,79 @@
+---
+title: 'Higher market activity leads to higher processing latency'
+publishedAt: '2023-08-27'
+summary: 'Part 2 in a series looking at the feasability of a real-time price aggregate of multiple crypto exchanges. In this entry, we indexed BTC, ETH and RPL over a period of 3 days where during a high market activity event.'
+---
+
+Following [my previous exploration into the feasability of a real-time price
+aggregate](/blog/realtime-aggregate-experiment), I continued gathering data. More data:
+more symbols, more connectors, and order books in addition to trades! But with more data
+comes more headaches. We'll dig into that.
+
+I was lucky enough to capture an episode of high market activity that happened on Friday
+Aug 18th. In this post, I'll explore how the aggregate pipeline handled the event.
+Spoiler: pretty badly. Highlights... ????????
+
+[notebook link] ???????????
+
+## Data collection changes
+
+### (1) Now indexing trades and order books
+
+If you recall, my data gathering code was using CCXT's `watch_ticker` websocket endpoint
+to gather the last price of symbols accross exchanges. This endpoint is essentially the
+candles feed of exchanges. I decided to stop using this endpoint and instead use a
+combination of `watch_trades` and `watch_order_book`.
+
+This allows me to have a real-time aggregate based on both trades (last price) and
+current bid/ask spreads (mid price).
+
+### (2) Focus on specific exchanges
+
+Instead of trying as many exchanges as possible and hoping for the best, I instead made
+sure specific exchanges were included. Binance calculates the futures Mark price using a
+specific list of "good" exchanges: KuCoin, Huobi, OKX, HitBTC, Gate.io, Ascendex, MXC,
+Bitfinex, Coinbase, Bitstamp, Kraken, and Bybit. 
+
+Using that list, with Binance, and the the exchanges supported by CCXT yielded a a list
+of 12 exchanges to index: 
+
+```python
+GOLD_CONNECTORS = {
+    "kucoin",
+    "huobi",
+    "okx",
+    "hitbtc",
+    "gateio",
+    "ascendex",
+    "bitfinex",
+    "coinbase",
+    "bitstamp",
+    "kraken",
+    "bybit",
+    "binance",
+}
+```
+
+
+## Data overview
+
+I decided to index the data of 6 symbols: **BTC/USD**, **BTC/USDT**, **ETH/USDT**,
+**ETH/USDT**, **RPL/USD** and **RPL/USDT**. 3 assets, with both their USD and USDT
+traded pairs.
+
+The bad news: trades and order books from 12 exchanges for 6 symbols (including the 2
+biggest markets) kinda generate a lot of data to process. Over 4 days, the data pipeline
+processed 13,057,702 trades and 7,333,657 order book updates. During the highest
+activity peak, it's between 300 and 500 messages that needed to be processed every
+second.
+
+Unfortunately, the single-process data pipeline did not keep up at that moment :-) I hit
+the limit of what a single-threaded asyncio pipeline written in unoptimized Python can
+achieve.
+
+      <StaticPlotlyChart filepath='input_data_messages.json' />
+
+
+The streaming code is still private, but I've come
+
+I will soon share the code used to index all of this data
