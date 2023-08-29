@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, PropsWithChildren } from 'react';
 import Plot from 'react-plotly.js';
 
 import axios from "axios";
+import PlotPlaceholder from "./plot-placeholder";
 
 type PlotlyData = {
     data: object;
@@ -23,33 +24,7 @@ export async function plotlyChartFetch(filepath: string) {
     });
 }
 
-function Placeholder() {
-    return (
-        <div className="animate-pulse">
-            <div className="flex space-x-4 items-baseline m-6">
-                <div className="flex-1 h-24 bg-gray-200 rounded"></div>
-                <div className="flex-1 h-36 bg-gray-200 rounded"></div>
-                <div className="flex-1 h-48 bg-gray-200 rounded"></div>
-                <div className="flex-1 h-64 bg-gray-300 rounded"></div>
-                <div className="flex-1 h-72 bg-gray-200 rounded"></div>
-                <div className="flex-1 h-64 bg-gray-300 rounded"></div>
-                <div className="flex-1 h-48 bg-gray-200 rounded"></div>
-                <div className="flex-1 h-36 bg-gray-200 rounded"></div>
-                <div className="flex-1 h-72 bg-gray-300 rounded"></div>
-                <div className="flex-1 h-36 bg-gray-200 rounded"></div>
-                <div className="flex-1 h-48 bg-gray-200 rounded"></div>
-                <div className="flex-1 h-64 bg-gray-300 rounded"></div>
-                <div className="flex-1 h-72 bg-gray-200 rounded"></div>
-                <div className="flex-1 h-64 bg-gray-300 rounded"></div>
-                <div className="flex-1 h-48 bg-gray-200 rounded"></div>
-                <div className="flex-1 h-36 bg-gray-200 rounded"></div>
-                <div className="flex-1 h-24 bg-gray-200 rounded"></div>
-            </div>
-        </div>
-    )
-}
-
-function StaticPlotlyChart({ filepath, height, width }: { filepath: string, height?: string | number, width?: string | number }) {
+function StaticPlotlyChart({ filepath, height, width, children }: PropsWithChildren<{ filepath: string, height?: string | number, width?: string | number }>) {
 
     const [plotlyData, setPlotlyData] = useState<PlotlyData | undefined>(undefined);
 
@@ -63,9 +38,9 @@ function StaticPlotlyChart({ filepath, height, width }: { filepath: string, heig
         ...staticLayout,
     }
 
-    return (
-        <div className="border-solid rounded-lg my-4 -mx-15 border-2 p-1.5 bg-white">
-            {plotlyData ? (
+    return plotlyData ? (
+        <div className="-mx-10">
+            <div className="border-solid rounded-lg my-4 border-2 p-1.5 bg-white" >
                 <Plot
                     data={plotlyData.data}
                     layout={layout}
@@ -75,10 +50,11 @@ function StaticPlotlyChart({ filepath, height, width }: { filepath: string, heig
                         height
                     }}
                 />
-            ) : (
-                <Placeholder />
-            )}
+            </div >
+            {children && <small>{children}</small>}
         </div>
+    ) : (
+        <PlotPlaceholder />
     );
 }
 

@@ -1,5 +1,5 @@
 ---
-title: 'Higher market activity leads to higher processing latency'
+title: 'How different crypto exchanges websocket endpoints perform during high activity markets'
 publishedAt: '2023-08-27'
 summary: 'Part 2 in a series looking at the feasability of a real-time price aggregate of multiple crypto exchanges. In this entry, we indexed BTC, ETH and RPL over a period of 3 days where during a high market activity event.'
 ---
@@ -11,9 +11,17 @@ comes more headaches. We'll dig into that.
 
 I was lucky enough to capture an episode of high market activity that happened on Friday
 Aug 18th. In this post, I'll explore how the aggregate pipeline handled the event.
-Spoiler: pretty badly. Highlights... ????????
+Spoiler: pretty badly. However, the data shows the difference in how exchanges perform
+during a mild high-activity market.
 
-[notebook link] ???????????
+I initially planned to include the continuation of the true mid price exploration in
+this post. However, there was so much value in the latency points that I decided to
+split it up in a second post to come later. I hope you enjoy this latency-focused post!
+
+The notebook and the data of this experiment is much larger than the previous one.
+They'll soon be available when I open-source this pipeline project. In the meantime,
+reach out to me on Discord @dataroc or on LinkedIn if you wish to access either one of
+them!
 
 ## Data collection changes
 
@@ -32,48 +40,112 @@ current bid/ask spreads (mid price).
 Instead of trying as many exchanges as possible and hoping for the best, I instead made
 sure specific exchanges were included. Binance calculates the futures Mark price using a
 specific list of "good" exchanges: KuCoin, Huobi, OKX, HitBTC, Gate.io, Ascendex, MXC,
-Bitfinex, Coinbase, Bitstamp, Kraken, and Bybit. 
-
-Using that list, with Binance, and the the exchanges supported by CCXT yielded a a list
-of 12 exchanges to index: 
-
-```python
-GOLD_CONNECTORS = {
-    "kucoin",
-    "huobi",
-    "okx",
-    "hitbtc",
-    "gateio",
-    "ascendex",
-    "bitfinex",
-    "coinbase",
-    "bitstamp",
-    "kraken",
-    "bybit",
-    "binance",
-}
-```
-
+Bitfinex, Coinbase, Bitstamp, Kraken, and Bybit. Include Binance itself and this gets
+you 12 exchanges to index.
 
 ## Data overview
 
 I decided to index the data of 6 symbols: **BTC/USD**, **BTC/USDT**, **ETH/USDT**,
 **ETH/USDT**, **RPL/USD** and **RPL/USDT**. 3 assets, with both their USD and USDT
-traded pairs.
+traded pairs. Figure 1 shows the active connectors from Aug 18 to Aug 22.
 
-The bad news: trades and order books from 12 exchanges for 6 symbols (including the 2
-biggest markets) kinda generate a lot of data to process. Over 4 days, the data pipeline
-processed 13,057,702 trades and 7,333,657 order book updates. During the highest
-activity peak, it's between 300 and 500 messages that needed to be processed every
-second.
+<StaticPlotlyChart filepath='rae-part2/active_connectors.json'>
+    Figure 1: Active connectors per symbol during the experiment length. Each block is a connector that produced at least one message during an hour interval.
+</StaticPlotlyChart>
+
+### Crypto exchanges generate a lot of data
+
+The bad news: trades and order books from 12 exchanges for 6 symbols (including some of
+the biggest markets) kinda generate a lot of data to process. Over 4 days, the data
+pipeline processed 13,057,702 trades and 7,333,657 order book updates. During the
+highest activity peak, it's between 300 and 500 messages that needed to be processed
+every second. Figure 2 shows the count of processed messages during the experiment.
 
 Unfortunately, the single-process data pipeline did not keep up at that moment :-) I hit
-the limit of what a single-threaded asyncio pipeline written in unoptimized Python can
-achieve.
+the limit of what a single-threaded, asyncio pipeline written in unoptimized Python,
+running on 8 year old hardware can achieve.
 
-      <StaticPlotlyChart filepath='input_data_messages.json' />
+<StaticPlotlyChart filepath='rae-part2/input_data_messages.json'>
+    Figure 2: The total count of messages received in each 30 minutes interval. The trades_count are the trades streams and the spreads_count are the order book streams.
+</StaticPlotlyChart>
+
+## Database latency
+
+The first clear indicator that the pipeline did not keep up is the database insertion
+latency. The pipeline and the database both run on the same machine and share the same
+CPU, memory and disk resources. Therefore, any sustained database insertion latency is a
+sign of the system running at the limit of its capacities. 
+
+Figure 3 shows the database insertion latency over the duration of the experiment.
+Notice how certain periods have a very high sustained latency, such as starting at 13:00
+on Aug. 18. I actually heard my server's fan running full speed at that moment. Sure
+enough, the server was running at 75% CPU+ when I looked. I found the "culprit" soon
+enough: the crypto market was in a high volatility event on the major pairs.
+
+<StaticPlotlyChart filepath='rae-part2/database_latency.json'>
+    Figure 3: The median (p50), 95th and 99th percentile of the insertion delay of records
+    (both trade and order book streams). Note that these lines have been center-filtered 
+    (e.g. using "future" data at time x) using a 10 buckets window. 
+</StaticPlotlyChart>
+
+### Database insertion latency is directly correlated with market activity
+
+This is a clear indicator that the pipeline needs to be distributed over multiple
+machines - which is what I'm working on right now. Although you could argue having a
+sound indicator of market volatility is actually a good thing...
+
+If you superpose the trades count and the median database latency as in Figure 4, you can clearly see
+the 2 are strongly correlated. High trades throughput equals higher insertion latency.
+
+<StaticPlotlyChart filepath='rae-part2/database_latency_vs_trades.json'> 
+    Figure 4: The median database insertion latency and the total trades count throughput.
+    Notice how the trades spikes clearly correspond to a (smoothed) increase in the database
+    latency.
+</StaticPlotlyChart>
+
+## Connector latency
+
+This is the delta between the server-provided timestamp of when trades happened versus
+the timestamp of when we actually receive the message. The data here is a bit harder to
+interpret because the connector latency is indirectly affected by the increased load on
+the my server. Since it's the receiving pipeline job to stamp the time at which the
+message is received, any delay in processing artifically increases the perceived delay
+of the connector.
+
+Figure 5 shows the unfiltered, median connector latency throughout the experiment.
+
+<StaticPlotlyChart filepath='rae-part2/connector_latency_p50.json'>
+    Figure 5: The median connector latency. Note that bitfinex was excluded due to an
+    overall poor performance and abnormal latency peaks. 
+</StaticPlotlyChart>
+
+### Connector latency stability varies by exchange
+
+Nonetheless, it's interesting to see that some connectors performed relatively well
+throughout the duration of the experiment even if the machine was under heavy load.
+Considering all connectors were subjected to the same heavy load conditions, differences
+in performance between connectors can reasonably be attributed to the respective
+exchange ability to perform during high market activity events. 
+
+If you look at Figure 6, you can see that Binance seems to be performing without much
+difference around Aug 18, 13:00 - the high market activity event. Compare that to Kucoin
+that has a noticeable increase in connector latency.
+
+<StaticPlotlyChart filepath='rae-part2/connector_latency_p50_binance_kucoin.json'>
+    Figure 6: Drill down of Figure 5 comparing Binance and Kucoin. Notice how
+    Binance is stable while Kucoin performance varies in response to a higher activity
+    market. 
+</StaticPlotlyChart>
 
 
-The streaming code is still private, but I've come
+## Conclusion
 
-I will soon share the code used to index all of this data
+Although it is unfortunate that the pipeline hit a hardware limit during the experiment,
+it's interesting to see that exchange performance data could be infered nonetheless.
+
+I will soon share the code used to run these experiments. I'm currently refactoring the
+pipeline to support a distributed execution. Moreover, I'm adding Redis as an in-memory,
+high speed database for communications and an eventual real-time API.
+
+I'm happy to take comments and suggestions! Reach out either on Discord @dataroc or on
+LinkedIn.

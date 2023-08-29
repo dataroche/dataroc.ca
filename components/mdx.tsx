@@ -1,9 +1,21 @@
 import * as React from 'react';
+
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useMDXComponent } from 'next-contentlayer/hooks';
+import PlotPlaceholder from "./plot-placeholder";
 
-import StaticPlotlyChart from './static-plotly-chart';
+const StaticPlotlyChart = dynamic(
+  () =>
+    import(
+      './static-plotly-chart'
+    ),
+  {
+    ssr: false,
+    loading: () => <PlotPlaceholder />,
+  },
+);
 
 const CustomLink = (props) => {
   const href = props.href;
