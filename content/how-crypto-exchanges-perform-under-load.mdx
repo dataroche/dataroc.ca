@@ -1,7 +1,7 @@
 ---
-title: 'How different crypto exchanges websocket endpoints perform during high activity markets'
-publishedAt: '2023-08-27'
-summary: 'Part 2 in a series looking at the feasability of a real-time price aggregate of multiple crypto exchanges. In this entry, we indexed BTC, ETH and RPL over a period of 3 days where during a high market activity event.'
+title: 'How crypto exchanges websocket endpoints perform during (mild) high activity periods'
+publishedAt: '2023-08-28'
+summary: 'Part 2 in a series looking at the feasability of a real-time price aggregate of multiple crypto exchanges. In this entry, we indexed BTC, ETH and RPL over a period of 4 days incuding a high market activity period.'
 ---
 
 Following [my previous exploration into the feasability of a real-time price
@@ -43,6 +43,19 @@ specific list of "good" exchanges: KuCoin, Huobi, OKX, HitBTC, Gate.io, Ascendex
 Bitfinex, Coinbase, Bitstamp, Kraken, and Bybit. Include Binance itself and this gets
 you 12 exchanges to index.
 
+### (3) NTP time synchronization
+
+Some users inquired on my previous post regarding time synchronization. Although it
+wasn't one my concerns initially, I realized the server that runs the data collection
+was (and still is) using the Ubuntu NTP server by default. Therefore, without being
+aware, my server was already keeping my time synchronized to an NTP server with a
+reasonable precision. At the time of writing, `timedatectl timesync-status` was
+reporting a mean time offset of +2.7ms.
+
+Therefore, I assume the timestamps provided by my server are accurate to at least 5ms,
+which means any latency measurement shows in this post should be considered accurate to
+about 5ms.
+
 ## Data overview
 
 I decided to index the data of 6 symbols: **BTC/USD**, **BTC/USDT**, **ETH/USDT**,
@@ -76,6 +89,8 @@ latency. The pipeline and the database both run on the same machine and share th
 CPU, memory and disk resources. Therefore, any sustained database insertion latency is a
 sign of the system running at the limit of its capacities. 
 
+### Database insertion latency was unnaceptably high
+
 Figure 3 shows the database insertion latency over the duration of the experiment.
 Notice how certain periods have a very high sustained latency, such as starting at 13:00
 on Aug. 18. I actually heard my server's fan running full speed at that moment. Sure
@@ -88,14 +103,15 @@ enough: the crypto market was in a high volatility event on the major pairs.
     (e.g. using "future" data at time x) using a 10 buckets window. 
 </StaticPlotlyChart>
 
-### Database insertion latency is directly correlated with market activity
-
 This is a clear indicator that the pipeline needs to be distributed over multiple
 machines - which is what I'm working on right now. Although you could argue having a
 sound indicator of market volatility is actually a good thing...
 
-If you superpose the trades count and the median database latency as in Figure 4, you can clearly see
-the 2 are strongly correlated. High trades throughput equals higher insertion latency.
+### Database insertion latency is directly correlated with market activity
+
+If you superpose the trades count and the median database latency as in Figure 4, you
+can clearly see the 2 are strongly correlated. High trades throughput equals higher
+insertion latency.
 
 <StaticPlotlyChart filepath='rae-part2/database_latency_vs_trades.json'> 
     Figure 4: The median database insertion latency and the total trades count throughput.
@@ -105,12 +121,13 @@ the 2 are strongly correlated. High trades throughput equals higher insertion la
 
 ## Connector latency
 
-This is the delta between the server-provided timestamp of when trades happened versus
-the timestamp of when we actually receive the message. The data here is a bit harder to
-interpret because the connector latency is indirectly affected by the increased load on
-the my server. Since it's the receiving pipeline job to stamp the time at which the
-message is received, any delay in processing artifically increases the perceived delay
-of the connector.
+the connector latency is the delta between the server-provided timestamp of when trades
+happened versus the timestamp of when we actually receive the message. 
+
+The data here is a bit harder to interpret because the connector latency is affected by
+the increased load on my server. Since it's the receiving pipeline job to stamp the time
+at which the message is received, any delay in processing artifically increases the
+perceived delay of the connector.
 
 Figure 5 shows the unfiltered, median connector latency throughout the experiment.
 
@@ -128,7 +145,7 @@ in performance between connectors can reasonably be attributed to the respective
 exchange ability to perform during high market activity events. 
 
 If you look at Figure 6, you can see that Binance seems to be performing without much
-difference around Aug 18, 13:00 - the high market activity event. Compare that to Kucoin
+impact around Aug 18, 13:00 - the high market activity event. Compare that to Kucoin
 that has a noticeable increase in connector latency.
 
 <StaticPlotlyChart filepath='rae-part2/connector_latency_p50_binance_kucoin.json'>
@@ -144,8 +161,8 @@ Although it is unfortunate that the pipeline hit a hardware limit during the exp
 it's interesting to see that exchange performance data could be infered nonetheless.
 
 I will soon share the code used to run these experiments. I'm currently refactoring the
-pipeline to support a distributed execution. Moreover, I'm adding Redis as an in-memory,
-high speed database for communications and an eventual real-time API.
+pipeline to support distributed execution. this includes adding Redis as an in-memory,
+high speed database for inter-node communications and support an eventual real-time API.
 
 I'm happy to take comments and suggestions! Reach out either on Discord @dataroc or on
 LinkedIn.
