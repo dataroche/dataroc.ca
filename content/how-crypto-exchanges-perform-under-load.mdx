@@ -52,8 +52,8 @@ aware, my server was already keeping my time synchronized to an NTP server with 
 reasonable precision. At the time of writing, `timedatectl timesync-status` was
 reporting a mean time offset of +2.7ms.
 
-Therefore, I assume the timestamps provided by my server are accurate to at least 5ms,
-which means any latency measurement shows in this post should be considered accurate to
+Therefore, we can assume the timestamps provided by my server are accurate to at least 5ms,
+which means any latency measurement shown in this post should be considered accurate to
 about 5ms.
 
 ## Data overview
@@ -63,7 +63,8 @@ I decided to index the data of 6 symbols: **BTC/USD**, **BTC/USDT**, **ETH/USDT*
 traded pairs. Figure 1 shows the active connectors from Aug 18 to Aug 22.
 
 <StaticPlotlyChart filepath='rae-part2/active_connectors.json'>
-    Figure 1: Active connectors per symbol during the experiment length. Each block is a connector that produced at least one message during an hour interval.
+    Figure 1: Active connectors per symbol during the experiment length. 
+    Each block is a connector that produced at least one message during an hour interval.
 </StaticPlotlyChart>
 
 ### Crypto exchanges generate a lot of data
@@ -84,12 +85,17 @@ running on 8 year old hardware can achieve.
 
 ## Database latency
 
-The first clear indicator that the pipeline did not keep up is the database insertion
+The database latency is the time delta between the reception of a certain message (i.e.
+a market trade of BTC/USDT on Binance) and the database insertion timestamp using an SQL
+function such as `NOW()`. This delta has an effective error margin of 0 since both
+timestamps are provided by the same machine.
+
+### Database insertion latency was unnaceptably high
+
+The first clear indicator that the pipeline did not keep up is this database insertion
 latency. The pipeline and the database both run on the same machine and share the same
 CPU, memory and disk resources. Therefore, any sustained database insertion latency is a
 sign of the system running at the limit of its capacities. 
-
-### Database insertion latency was unnaceptably high
 
 Figure 3 shows the database insertion latency over the duration of the experiment.
 Notice how certain periods have a very high sustained latency, such as starting at 13:00
@@ -105,12 +111,12 @@ enough: the crypto market was in a high volatility event on the major pairs.
 
 This is a clear indicator that the pipeline needs to be distributed over multiple
 machines - which is what I'm working on right now. Although you could argue having a
-sound indicator of market volatility is actually a good thing...
+literal *sound* indicator of market volatility is actually a good thing...
 
-### Database insertion latency is directly correlated with market activity
+### Database insertion latency was directly correlated with market activity
 
 If you superpose the trades count and the median database latency as in Figure 4, you
-can clearly see the 2 are strongly correlated. High trades throughput equals higher
+can clearly see the 2 are strongly correlated. High trades activity equals high
 insertion latency.
 
 <StaticPlotlyChart filepath='rae-part2/database_latency_vs_trades.json'> 
@@ -119,9 +125,15 @@ insertion latency.
     latency.
 </StaticPlotlyChart>
 
+One interesting property of the database latency is that it *only* considers the
+programmatic pipeline delay - not any network delay. It is the time between the pipeline
+receiving a message and the local database inserting the record. Therefore, we can
+conclude with high confidence that our pipeline in it's current state is unable to
+support this amount of trading activity.
+
 ## Connector latency
 
-the connector latency is the delta between the server-provided timestamp of when trades
+the connector latency is the time delta between the server-provided timestamp of when trades
 happened versus the timestamp of when we actually receive the message. 
 
 The data here is a bit harder to interpret because the connector latency is affected by
@@ -136,7 +148,7 @@ Figure 5 shows the unfiltered, median connector latency throughout the experimen
     overall poor performance and abnormal latency peaks. 
 </StaticPlotlyChart>
 
-### Connector latency stability varies by exchange
+### Connector latency stability varied by exchange
 
 Nonetheless, it's interesting to see that some connectors performed relatively well
 throughout the duration of the experiment even if the machine was under heavy load.
