@@ -133,13 +133,13 @@ support this amount of trading activity.
 
 ## Connector latency
 
-the connector latency is the time delta between the server-provided timestamp of when trades
+The connector latency is the time delta between the server-provided timestamp of when trades
 happened versus the timestamp of when we actually receive the message. 
 
 The data here is a bit harder to interpret because the connector latency is affected by
-the increased load on my server. Since it's the receiving pipeline job to stamp the time
-at which the message is received, any delay in processing artifically increases the
-perceived delay of the connector.
+the increased load on the server running the pipeline. Since it's the receiving pipeline
+job to stamp the time at which the message is received, any delay in processing
+artifically increases the perceived delay of the connector.
 
 Figure 5 shows the unfiltered, median connector latency throughout the experiment.
 
@@ -166,11 +166,29 @@ that has a noticeable increase in connector latency.
     market. 
 </StaticPlotlyChart>
 
+Even though we conclude here that the discrepencies between exchanges are not due to the
+pipeline, some properties could shift back the blaim on the pipeline itself:
+
+- There is a possibility that certain connectors asyncio coroutines were executed more
+  frequently than others and therefore reducing the median latency.
+- It's possible the ratio of the number of trades in a low activity market versus a high
+  activity market is much higher in smaller exchanges than in bigger ones. E.g. maybe
+  Binance BTC/USDT has 10000 trades in a "normal" hour, and 30000 trades in a "volatile"
+  hour (ratio of 3), but Kucoin has respectively 1000 and 10000 trades (ratio of 10) in
+  these hours.
+- Because we're only looking at 30 minutes buckets of median latencies, short high
+  activity zones could be "hidden" in the bucket. And more so for exchanges with a
+  higher ratio of high/low activity trades.
+
+The more I'm thinking about this the more I think these connector latencies are actually
+affected by the pipeline itself. I'll have to dig into this deeper in the next
+installment of this serie.
 
 ## Conclusion
 
 Although it is unfortunate that the pipeline hit a hardware limit during the experiment,
-it's interesting to see that exchange performance data could be infered nonetheless.
+it's interesting to see that some exchange performance data could be infered
+nonetheless.
 
 I will soon share the code used to run these experiments. I'm currently refactoring the
 pipeline to support distributed execution. this includes adding Redis as an in-memory,
