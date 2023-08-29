@@ -39,7 +39,7 @@ function StaticPlotlyChart({ filepath, height, width, children }: PropsWithChild
     }
 
     return plotlyData ? (
-        <div className="-mx-10">
+        <div className="-mx-2 md:-mx-10">
             <div className="border-solid rounded-lg my-4 border-2 p-1.5 bg-white" >
                 <Plot
                     data={plotlyData.data}
