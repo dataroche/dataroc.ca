@@ -8,13 +8,13 @@ const textFont = Fragment_Mono({ weight: '400', subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "William Laroche's Sandbox",
+    default: "William Laroche",
     template: '%s | William Laroche',
   },
-  description: 'Developer, algorithmic trading enthusiast.',
+  description: "Hey, I'm dataroc. A Software developer, data enthousiast and past entrepreneur. Currently building software to help local businesses build a sense of home and community @thethirdplace.",
   openGraph: {
     title: 'William Laroche',
-    description: 'Developer, algorithmic trading enthusiast.',
+    description: "Hey, I'm dataroc. A Software developer, data enthousiast and past entrepreneur. Currently building software to help local businesses build a sense of home and community @thethirdplace.",
     url: 'https://dataroc.ca',
     siteName: 'William Laroche',
     images: [
