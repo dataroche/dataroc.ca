@@ -4,7 +4,11 @@ import { Fragment_Mono } from 'next/font/google'
 import Sidebar from '../components/sidebar'
 import { Analytics } from '@vercel/analytics/react'
 
-const textFont = Fragment_Mono({ weight: '400', subsets: ['latin'] })
+const textFont = Fragment_Mono({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+})
 
 const siteName = 'Dataroc | Cryptocurrency markets analytics and automation'
 const description =

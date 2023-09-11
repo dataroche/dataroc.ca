@@ -1,0 +1,140 @@
+---
+title: 'The most performant timestamp functions in Python'
+publishedAt: '2023-09-11'
+summary: 'We explore different ways of getting the current timestamp in Python and profile their respective execution times.'
+---
+
+While gathering data for [my exploration into the feasability of a real-time price
+aggregate](/blog/how-crypto-exchanges-perform-under-load), I was generating a high amount of
+timestamps in order to calculate message latencies.
+
+I was facing issues increasing the capacity of my data pipeline and started optimizing
+certain areas. Because of the high amount of timestamp calls, I wondered what was the
+performance impact of generating a timestamp.
+
+Is `time.time()` the fastest? What if you need a datetime object:
+`datetime.now()`, `datetime.utcnow()`? Let's find out!
+
+## Functions tested
+
+```python
+import time
+time.time()
+```
+
+```python
+import datetime
+datetime.datetime.now().timestamp()
+```
+
+```python
+import datetime
+datetime.datetime.utcnow().timestamp()
+```
+
+```python
+import datetime
+datetime.datetime.utcnow()
+```
+
+```python
+import datetime
+datetime.datetime.now()
+```
+
+```python
+import datetime
+import pytz
+
+pytz.UTC.localize(datetime.datetime.utcnow())
+```
+
+```python
+import datetime
+import pytz
+
+a_timezone = pytz.timezone('America/Los_Angeles')
+a_timezone.localize(datetime.datetime.utcnow())
+```
+
+## Results
+
+<StaticPlotlyChart filepath="timestamp-functions/timestamp_functions.json">
+  Figure 1: The time required for 500,000 calls of the respective function.
+  Lower is better.
+</StaticPlotlyChart>
+
+The results are actually a bit surprising! Some interesting facts:
+
+- Generating a UTC timestamp is much faster than generating one for a local timezone
+- Unless you really need a tz-aware datetime object, you should stick to a UTC-based,
+  tz-naive datetime or epoch timestamp.
+- The overhead of creating a datetime object is minimal. Compare `time.time()` and
+  `datetime.utcnow()`: the difference is about 50% slower. Therefore, there is almost no
+  impact in tracking a datetime object instead of a epoch timestamp in seconds (there
+  might be a memory footprint impact though).
+- `datetime.utcnow()` is faster than `datetime.now()`!
+
+## Conclusion
+
+- Use `time.time()` for epoch timestamps.
+- Use `datetime.utcnow()` for datetime timestamps.
+- For tz-aware datetimes, you should do your own research. I only skimmed the surface here.
+
+## Code
+
+```python
+
+number = 100000
+results = {}
+
+import timeit
+
+results["time.time()"] = timeit.timeit(
+    setup="import time", stmt="time.time()", number=number
+)
+results["datetime.now().timestamp()"] = timeit.timeit(
+    setup="import datetime", stmt="datetime.datetime.now().timestamp()", number=number
+)
+results["datetime.now()"] = timeit.timeit(
+    setup="import datetime", stmt="datetime.datetime.now()", number=number
+)
+results["datetime.utcnow()"] = timeit.timeit(
+    setup="import datetime", stmt="datetime.datetime.utcnow()", number=number
+)
+results["pytz.UTC.localize(datetime.utcnow())"] = timeit.timeit(
+    setup="import datetime; import pytz",
+    stmt="pytz.UTC.localize(datetime.datetime.utcnow())",
+    number=number,
+)
+results["tz.localize(datetime.utcnow())"] = timeit.timeit(
+    setup="import datetime; import pytz; a_timezone = pytz.timezone('America/Los_Angeles')",
+    stmt="a_timezone.localize(datetime.datetime.utcnow())",
+    number=number,
+)
+
+import time
+
+print(f"{time.time()} -vs- {time.perf_counter()}")
+
+results_sorted = sorted(results.items(), key=lambda t: t[1])
+
+for name, result_s in results_sorted:
+    print(f"{name}: {result_s}")
+
+import plotly.io
+import plotly.express as px
+
+y, x = zip(*results_sorted)
+
+fig = px.bar(x=x, y=y, orientation="h", log_x=True)
+
+fig.update_layout(
+    title=f"Time required for {number} calls (lower is better)",
+    xaxis_title="Time(s), log scale",
+    yaxis_title="",
+)
+plotly.io.write_json(fig, "timestamp_functions.json")
+fig
+
+```
