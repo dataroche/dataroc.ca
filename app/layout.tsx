@@ -6,17 +6,20 @@ import { Analytics } from '@vercel/analytics/react';
 
 const textFont = Fragment_Mono({ weight: '400', subsets: ["latin"] });
 
+const siteName = "Dataroc | Cryptocurrency markets analytics and automation"
+const description = "Cryptocurrency markets analytics and automation. We help traders identify and capitalize on cryptocurrency market making opportunities."
+
 export const metadata: Metadata = {
   title: {
-    default: "William Laroche",
-    template: '%s | William Laroche',
+    default: siteName,
+    template: '%s | Dataroc',
   },
-  description: "Hey, I'm dataroc. A Software developer, data enthousiast and past entrepreneur. Currently building software to help local businesses build a sense of home and community @thethirdplace.",
+  description,
   openGraph: {
-    title: 'William Laroche',
-    description: "Hey, I'm dataroc. A Software developer, data enthousiast and past entrepreneur. Currently building software to help local businesses build a sense of home and community @thethirdplace.",
+    title: siteName,
+    description,
     url: 'https://dataroc.ca',
-    siteName: 'William Laroche',
+    siteName,
     images: [
       // {
       //   url: 'https://dataroc.ca/og.jpg',

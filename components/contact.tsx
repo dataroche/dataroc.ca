@@ -5,7 +5,7 @@ import {
 export const LinkedInLink = () => {
     return (
         <a
-            className="inline-flex items-center flex-row transition-all dark:text-sky hover:opacity-70"
+            className="inline-flex items-center flex-row transition-all dark:text-sky hover:opacity-70 mx-1"
             rel="noopener noreferrer"
             target="_blank"
             href="https://www.linkedin.com/in/william-laroche/?locale=en_US"
@@ -19,7 +19,7 @@ export const LinkedInLink = () => {
 export function ContactParagraph() {
     return (
         <p className="mt-10 font-light text-sm ">
-            For questions, inquiries or good old chit-chat, reach out on <LinkedInLink />
+            For work inquiries or simple chit-chat, reach out on <LinkedInLink />
         </p>
     )
 }
