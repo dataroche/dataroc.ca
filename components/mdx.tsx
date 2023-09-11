@@ -1,42 +1,36 @@
-import * as React from 'react';
+import * as React from 'react'
 
-import dynamic from 'next/dynamic';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useMDXComponent } from 'next-contentlayer/hooks';
-import PlotPlaceholder from "./plot-placeholder";
+import dynamic from 'next/dynamic'
+import Link from 'next/link'
+import Image from 'next/image'
+import { useMDXComponent } from 'next-contentlayer/hooks'
+import PlotPlaceholder from './plot-placeholder'
 
-const StaticPlotlyChart = dynamic(
-  () =>
-    import(
-      './static-plotly-chart'
-    ),
-  {
-    ssr: false,
-    loading: () => <PlotPlaceholder />,
-  },
-);
+const StaticPlotlyChart = dynamic(() => import('./static-plotly-chart'), {
+  ssr: false,
+  loading: () => <PlotPlaceholder />,
+})
 
 const CustomLink = (props) => {
-  const href = props.href;
+  const href = props.href
 
   if (href.startsWith('/')) {
     return (
       <Link href={href} {...props}>
         {props.children}
       </Link>
-    );
+    )
   }
 
   if (href.startsWith('#')) {
-    return <a {...props} />;
+    return <a {...props} />
   }
 
-  return <a target="_blank" rel="noopener noreferrer" {...props} />;
-};
+  return <a target="_blank" rel="noopener noreferrer" {...props} />
+}
 
 function RoundedImage(props) {
-  return <Image alt={props.alt} className="rounded-lg" {...props} />;
+  return <Image alt={props.alt} className="rounded-lg" {...props} />
 }
 
 function Callout(props) {
@@ -45,7 +39,7 @@ function Callout(props) {
       <div className="flex items-center w-4 mr-4">{props.emoji}</div>
       <div className="w-full callout">{props.children}</div>
     </div>
-  );
+  )
 }
 
 function ProsCard({ title, pros }) {
@@ -74,7 +68,7 @@ function ProsCard({ title, pros }) {
         ))}
       </div>
     </div>
-  );
+  )
 }
 
 function ConsCard({ title, cons }) {
@@ -99,7 +93,7 @@ function ConsCard({ title, cons }) {
         ))}
       </div>
     </div>
-  );
+  )
 }
 
 const components = {
@@ -108,19 +102,19 @@ const components = {
   Callout,
   ProsCard,
   ConsCard,
-  StaticPlotlyChart
-};
+  StaticPlotlyChart,
+}
 
 interface MdxProps {
-  code: string;
+  code: string
 }
 
 export function Mdx({ code }: MdxProps) {
-  const Component = useMDXComponent(code);
+  const Component = useMDXComponent(code)
 
   return (
     <article className="prose prose-quoteless prose-neutral dark:prose-invert">
       <Component components={{ ...components }} />
     </article>
-  );
+  )
 }

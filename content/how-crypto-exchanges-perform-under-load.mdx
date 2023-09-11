@@ -62,9 +62,10 @@ I decided to index the data of 6 symbols: **BTC/USD**, **BTC/USDT**, **ETH/USDT*
 **ETH/USDT**, **RPL/USD** and **RPL/USDT**. 3 assets, with both their USD and USDT
 traded pairs. Figure 1 shows the active connectors from Aug 18 to Aug 22.
 
-<StaticPlotlyChart filepath='rae-part2/active_connectors.json'>
-    Figure 1: Active connectors per symbol during the experiment length. 
-    Each block is a connector that produced at least one message during an hour interval.
+<StaticPlotlyChart filepath="rae-part2/active_connectors.json">
+  Figure 1: Active connectors per symbol during the experiment length. Each
+  block is a connector that produced at least one message during an hour
+  interval.
 </StaticPlotlyChart>
 
 ### Crypto exchanges generate a lot of data
@@ -79,8 +80,10 @@ Unfortunately, the single-process data pipeline did not keep up at that moment :
 the limit of what a single-threaded, asyncio pipeline written in unoptimized Python,
 running on 8 year old hardware can achieve.
 
-<StaticPlotlyChart filepath='rae-part2/input_data_messages.json'>
-    Figure 2: The total count of messages received in each 30 minutes interval. The trades_count are the trades streams and the spreads_count are the order book streams.
+<StaticPlotlyChart filepath="rae-part2/input_data_messages.json">
+  Figure 2: The total count of messages received in each 30 minutes interval.
+  The trades_count are the trades streams and the spreads_count are the order
+  book streams.
 </StaticPlotlyChart>
 
 ## Database latency
@@ -95,7 +98,7 @@ timestamps are provided by the same machine.
 The first clear indicator that the pipeline did not keep up is this database insertion
 latency. The pipeline and the database both run on the same machine and share the same
 CPU, memory and disk resources. Therefore, any sustained database insertion latency is a
-sign of the system running at the limit of its capacities. 
+sign of the system running at the limit of its capacities.
 
 Figure 3 shows the database insertion latency over the duration of the experiment.
 Notice how certain periods have a very high sustained latency, such as starting at 13:00
@@ -103,15 +106,16 @@ on Aug. 18. I actually heard my server's fan running full speed at that moment. 
 enough, the server was running at 75% CPU+ when I looked. I found the "culprit" soon
 enough: the crypto market was in a high volatility event on the major pairs.
 
-<StaticPlotlyChart filepath='rae-part2/database_latency.json'>
-    Figure 3: The median (p50), 95th and 99th percentile of the insertion delay of records
-    (both trade and order book streams). Note that these lines have been center-filtered 
-    (e.g. using "future" data at time x) using a 10 buckets window. 
+<StaticPlotlyChart filepath="rae-part2/database_latency.json">
+  Figure 3: The median (p50), 95th and 99th percentile of the insertion delay of
+  records (both trade and order book streams). Note that these lines have been
+  center-filtered (e.g. using "future" data at time x) using a 10 buckets
+  window.
 </StaticPlotlyChart>
 
 This is a clear indicator that the pipeline needs to be distributed over multiple
 machines - which is what I'm working on right now. Although you could argue having a
-literal *sound* indicator of market volatility is actually a good thing...
+literal _sound_ indicator of market volatility is actually a good thing...
 
 ### Database insertion latency was directly correlated with market activity
 
@@ -119,13 +123,13 @@ If you superpose the trades count and the median database latency as in Figure 4
 can clearly see the 2 are strongly correlated. High trades activity equals high
 insertion latency.
 
-<StaticPlotlyChart filepath='rae-part2/database_latency_vs_trades.json'> 
-    Figure 4: The median database insertion latency and the total trades count throughput.
-    Notice how the trades spikes clearly correspond to a (smoothed) increase in the database
-    latency.
+<StaticPlotlyChart filepath="rae-part2/database_latency_vs_trades.json">
+  Figure 4: The median database insertion latency and the total trades count
+  throughput. Notice how the trades spikes clearly correspond to a (smoothed)
+  increase in the database latency.
 </StaticPlotlyChart>
 
-One interesting property of the database latency is that it *only* considers the
+One interesting property of the database latency is that it _only_ considers the
 programmatic pipeline delay - not any network delay. It is the time between the pipeline
 receiving a message and the local database inserting the record. Therefore, we can
 conclude with high confidence that our pipeline in it's current state is unable to
@@ -134,7 +138,7 @@ support this amount of trading activity.
 ## Connector latency
 
 The connector latency is the time delta between the server-provided timestamp of when trades
-happened versus the timestamp of when we actually receive the message. 
+happened versus the timestamp of when we actually receive the message.
 
 The data here is a bit harder to interpret because the connector latency is affected by
 the increased load on the server running the pipeline. Since it's the receiving pipeline
@@ -143,9 +147,9 @@ artifically increases the perceived delay of the connector.
 
 Figure 5 shows the unfiltered, median connector latency throughout the experiment.
 
-<StaticPlotlyChart filepath='rae-part2/connector_latency_p50.json'>
-    Figure 5: The median connector latency. Note that bitfinex was excluded due to an
-    overall poor performance and abnormal latency peaks. 
+<StaticPlotlyChart filepath="rae-part2/connector_latency_p50.json">
+  Figure 5: The median connector latency. Note that bitfinex was excluded due to
+  an overall poor performance and abnormal latency peaks.
 </StaticPlotlyChart>
 
 ### Connector latency stability varied by exchange
@@ -154,16 +158,16 @@ Nonetheless, it's interesting to see that some connectors performed relatively w
 throughout the duration of the experiment even if the machine was under heavy load.
 Considering all connectors were subjected to the same heavy load conditions, differences
 in performance between connectors can reasonably be attributed to the respective
-exchange ability to perform during high market activity events. 
+exchange ability to perform during high market activity events.
 
 If you look at Figure 6, you can see that Binance seems to be performing without much
 impact around Aug 18, 13:00 - the high market activity event. Compare that to Kucoin
 that has a noticeable increase in connector latency.
 
-<StaticPlotlyChart filepath='rae-part2/connector_latency_p50_binance_kucoin.json'>
-    Figure 6: Drill down of Figure 5 comparing Binance and Kucoin. Notice how
-    Binance is stable while Kucoin performance varies in response to a higher activity
-    market. 
+<StaticPlotlyChart filepath="rae-part2/connector_latency_p50_binance_kucoin.json">
+  Figure 6: Drill down of Figure 5 comparing Binance and Kucoin. Notice how
+  Binance is stable while Kucoin performance varies in response to a higher
+  activity market.
 </StaticPlotlyChart>
 
 Even though we conclude here that the discrepencies between exchanges are not due to the

@@ -1,4 +1,4 @@
-import PageTitle from 'components/page-title';
+import PageTitle from 'components/page-title'
 
 export default function AboutPage() {
   return (
@@ -8,5 +8,5 @@ export default function AboutPage() {
         This is my about page.
       </p>
     </section>
-  );
+  )
 }

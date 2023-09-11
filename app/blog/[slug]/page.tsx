@@ -1,22 +1,22 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { Mdx } from 'components/mdx';
-import { ContactParagraph } from 'components/contact';
-import { allBlogs } from 'contentlayer/generated';
-import Balancer from 'react-wrap-balancer';
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { Mdx } from 'components/mdx'
+import { ContactParagraph } from 'components/contact'
+import { allBlogs } from 'contentlayer/generated'
+import Balancer from 'react-wrap-balancer'
 
 export async function generateStaticParams() {
   return allBlogs.map((post) => ({
     slug: post.slug,
-  }));
+  }))
 }
 
 export async function generateMetadata({
   params,
 }): Promise<Metadata | undefined> {
-  const post = allBlogs.find((post) => post.slug === params.slug);
+  const post = allBlogs.find((post) => post.slug === params.slug)
   if (!post) {
-    return;
+    return
   }
 
   const {
@@ -25,10 +25,10 @@ export async function generateMetadata({
     summary: description,
     image,
     slug,
-  } = post;
+  } = post
   const ogImage = image
     ? `https://dataroc.ca${image}`
-    : `https://dataroc.ca/api/og?title=${title}`;
+    : `https://dataroc.ca/api/og?title=${title}`
 
   return {
     title,
@@ -51,14 +51,14 @@ export async function generateMetadata({
       description,
       images: [ogImage],
     },
-  };
+  }
 }
 
 export default async function Blog({ params }) {
-  const post = allBlogs.find((post) => post.slug === params.slug);
+  const post = allBlogs.find((post) => post.slug === params.slug)
 
   if (!post) {
-    notFound();
+    notFound()
   }
 
   return (
@@ -78,5 +78,5 @@ export default async function Blog({ params }) {
       <Mdx code={post.body.code} />
       <ContactParagraph />
     </section>
-  );
+  )
 }

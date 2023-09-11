@@ -7,5 +7,5 @@ export default function robots() {
     ],
     sitemap: 'https://dataroc.ca/sitemap.xml',
     host: 'https://dataroc.ca',
-  };
+  }
 }

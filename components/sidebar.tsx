@@ -1,10 +1,10 @@
-'use client';
+'use client'
 
-import clsx from 'clsx';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
-import { LayoutGroup, motion } from 'framer-motion';
+import clsx from 'clsx'
+import { usePathname } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
+import { LayoutGroup, motion } from 'framer-motion'
 
 import solenoid from '../public/SOLeNOID_small.png'
 
@@ -21,26 +21,26 @@ const navItems = {
   '/blog': {
     name: 'blog',
   },
-};
+}
 
 function Logo() {
   return (
     <Link aria-label="Dataroc" href="/">
       <Image
         src={solenoid}
-        alt='Dataroc SOLeNOID'
+        alt="Dataroc SOLeNOID"
         width={64}
         height={64}
-        style={{ borderRadius: "20%" }}
+        style={{ borderRadius: '20%' }}
       />
     </Link>
-  );
+  )
 }
 
 export default function Navbar() {
-  let pathname = usePathname() || '/';
+  let pathname = usePathname() || '/'
   if (pathname.includes('/blog/')) {
-    pathname = '/blog';
+    pathname = '/blog'
   }
 
   return (
@@ -56,7 +56,7 @@ export default function Navbar() {
           >
             <div className="flex flex-row md:flex-col space-x-0 pr-10 mb-2 mt-2 md:mt-0">
               {Object.entries(navItems).map(([path, { name }]) => {
-                const isActive = path === pathname;
+                const isActive = path === pathname
                 return (
                   <Link
                     key={path}
@@ -65,7 +65,7 @@ export default function Navbar() {
                       'transition-all hover:text-black flex align-middle',
                       {
                         'text-slate-500 font-bold': isActive,
-                        'text-white': !isActive
+                        'text-white': !isActive,
                       }
                     )}
                   >
@@ -84,12 +84,12 @@ export default function Navbar() {
                       ) : null}
                     </span>
                   </Link>
-                );
+                )
               })}
             </div>
           </nav>
         </LayoutGroup>
       </div>
     </aside>
-  );
+  )
 }
