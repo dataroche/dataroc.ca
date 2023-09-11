@@ -31,6 +31,7 @@ function Logo() {
         alt="Dataroc SOLeNOID"
         width={64}
         height={64}
+        quality={95}
         style={{ borderRadius: '20%' }}
       />
     </Link>
