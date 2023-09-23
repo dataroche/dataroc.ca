@@ -10,7 +10,7 @@ export default async function HomePage() {
       <PageTitle
         subTitle={
           <span className="flex flex-row gap-5">
-            <p>Crypto markets freelancer</p>
+            {/* <p>Crypto markets freelancer</p> */}
             <LinkedInLink text="connect on linked in" />
           </span>
         }
