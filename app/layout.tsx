@@ -10,9 +10,9 @@ const textFont = Fragment_Mono({
   display: 'swap',
 })
 
-const siteName = 'Dataroc | Cryptocurrency markets analytics and automation'
+const siteName = 'Dataroc | Data-focused software developer and architect'
 const description =
-  'Cryptocurrency markets analytics and automation. We help traders identify and capitalize on cryptocurrency market making opportunities.'
+  'Data-focused software developer and architect. Lying in-between a software developer and a data scientist with all the skills to architect, implement, deploy and maintain data-focused applications.'
 
 export const metadata: Metadata = {
   title: {

@@ -10,16 +10,20 @@ export default async function HomePage() {
       <PageTitle
         subTitle={
           <span className="flex flex-row gap-5">
-            {/* <p>Crypto markets freelancer</p> */}
+            <p>Open to work</p>
             <LinkedInLink text="connect on linked in" />
           </span>
         }
       >
         dataroc
       </PageTitle>
+      <p className="mb-3">
+        Software developer and architect specialized in data-focused
+        applications and infrastructure. Ready for my next challenge in Fintech!
+      </p>
       <p className="mb-5">
-        Software developer and data enthousiast specialized in cryptocurrency
-        markets. My core coding principles: decoupling, reusability and quality.
+        As a side-project for the past 2 years, I've been automating market
+        making strategies on crypto exchanges.{' '}
       </p>
       <div className="flex items-center my-8 flex-row">
         <div className="space-y-2 text-neutral-500 dark:text-neutral-400">
@@ -49,7 +53,7 @@ export default async function HomePage() {
         <p className="text-sm">My market making portfolio</p>
       </div>
       <p className="my-5">
-        I love to compile and analyze markets data. My{' '}
+        I love to compile and analyze crypto markets data. My{' '}
         <a
           className="dark:text-sky hover:opacity-70 no-underline"
           href="/blog/how-crypto-exchanges-perform-under-load"
