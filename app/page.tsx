@@ -19,7 +19,7 @@ export default async function HomePage() {
       </PageTitle>
       <p className="mb-3">
         Software developer and architect specialized in data-focused
-        applications and infrastructure. Ready for my next challenge in Fintech!
+        applications and infrastructure. Ready for my next challenge!
       </p>
       <p className="mb-5">
         As a side-project for the past 2 years, I've been automating market
