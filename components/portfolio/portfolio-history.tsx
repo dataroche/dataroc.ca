@@ -1,11 +1,9 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { Line } from '@nivo/line'
+import React from 'react'
+import { ResponsiveLine } from '@nivo/line'
 
-// import { ResponsiveContainer, LineChart, Line, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, } from 'recharts';
-
-import { getPorfolioHistory, PortfolioHistory } from 'lib/api/portfolioHistory'
+import { usePortfolioHistory, PortfolioHistory } from 'lib/api/portfolioHistory'
 
 import colors from 'tailwindcss/colors'
 
@@ -37,13 +35,7 @@ type Props = {
 }
 
 export default function PortfolioHistory({ notes = [] }: Props) {
-  const [portfolioHistory, setPortfolioHistory] = useState<PortfolioHistory[]>(
-    []
-  )
-
-  useEffect(() => {
-    getPorfolioHistory().then((history) => setPortfolioHistory(history))
-  }, [])
+  const portfolioHistory = usePortfolioHistory()
 
   const tooltipFormatter = ({ slice }) => {
     const date = slice.points[0].data.xFormatted
@@ -76,68 +68,66 @@ export default function PortfolioHistory({ notes = [] }: Props) {
     y: entry.benchmarkPortfolioEthValue.toFixed(0),
   }))
 
-  const Chart = () => {
-    return (
-      <Line
-        theme={NIVO_THEME}
-        margin={{ top: 20, right: 40, bottom: 30, left: 60 }}
-        width={600}
-        height={500}
-        data={[
-          {
-            id: 'BTC Benchmark',
-            data: benchmarkPortfolioBtcValue,
-          },
-          {
-            id: 'ETH Benchmark',
-            data: benchmarkPortfolioEthValue,
-          },
-          {
-            id: 'Portfolio Value',
-            data: usdTotalValue,
-          },
-        ]}
-        xScale={{
-          type: 'time',
-          format: '%Y-%m-%d',
-          useUTC: false,
-          precision: 'day',
-          nice: true,
-        }}
-        xFormat="time:%Y-%m-%d"
-        yScale={{
-          type: 'linear',
-          min: 'auto',
-          max: 'auto',
-        }}
-        axisLeft={{
-          legendOffset: -55,
-          format: '$.0f',
-        }}
-        axisBottom={{
-          format: '%b %Y',
-          tickValues: 'every 2 months',
-          legendOffset: 35,
-        }}
-        useMesh={true}
-        enableSlices="x"
-        colors={{ scheme: 'category10' }}
-        sliceTooltip={tooltipFormatter}
-        markers={notes.map((note) => ({
-          axis: 'x',
-          value: new Date(note.date),
-          lineStyle: { stroke: '#93fee2', strokeWidth: 1 },
-          textStyle: {
-            fill: '#93fee2',
-            fontSize: 'smaller',
-          },
-          legend: note.description,
-        }))}
-      />
-    )
-  }
+  // const Chart = () => {
+  //   return
+  // }
 
-  return <Chart />
+  return (
+    <ResponsiveLine
+      theme={NIVO_THEME}
+      margin={{ top: 20, right: 40, bottom: 30, left: 60 }}
+      data={[
+        {
+          id: 'BTC Benchmark',
+          data: benchmarkPortfolioBtcValue,
+        },
+        {
+          id: 'ETH Benchmark',
+          data: benchmarkPortfolioEthValue,
+        },
+        {
+          id: 'Portfolio Value',
+          data: usdTotalValue,
+        },
+      ]}
+      xScale={{
+        type: 'time',
+        format: '%Y-%m-%d',
+        useUTC: false,
+        precision: 'day',
+        nice: true,
+      }}
+      xFormat="time:%Y-%m-%d"
+      yScale={{
+        type: 'linear',
+        min: 'auto',
+        max: 'auto',
+      }}
+      axisLeft={{
+        legendOffset: -55,
+        format: '$.0f',
+      }}
+      axisBottom={{
+        format: '%b %Y',
+        tickValues: 'every 2 months',
+        legendOffset: 35,
+      }}
+      useMesh={true}
+      enableSlices="x"
+      colors={{ scheme: 'category10' }}
+      sliceTooltip={tooltipFormatter}
+      markers={notes.map((note) => ({
+        axis: 'x',
+        value: new Date(note.date),
+        lineStyle: { stroke: '#93fee2', strokeWidth: 1 },
+        textStyle: {
+          fill: '#93fee2',
+          fontSize: 'smaller',
+        },
+        legend: note.description,
+      }))}
+    />
+  )
 
   // return (
   //     <ResponsiveContainer width="100%" height={500}>

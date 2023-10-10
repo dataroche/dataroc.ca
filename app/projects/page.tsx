@@ -3,19 +3,21 @@ import type { Metadata } from 'next'
 import { ContactParagraph } from 'components/contact'
 import PageTitle from 'components/page-title'
 import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link'
+import { getPortfolioSummaryServerSide } from 'lib/api/portfolioSummary'
 
 export const metadata: Metadata = {
   title: 'Projects',
   description: "Some projects I've worked on/I'm working on",
 }
 
-export default function UsesPage() {
+export default async function UsesPage() {
+  const portfolioSummary = await getPortfolioSummaryServerSide()
   return (
     <section>
       <PageTitle>projects</PageTitle>
       <div className="prose prose-neutral dark:prose-invert">
         <h2>Automated Crypto Trading Bots</h2>
-        <PortfolioSummaryLink />
+        <PortfolioSummaryLink portfolioSummary={portfolioSummary} />
         <p>
           Started experimenting with liquidity mining on{' '}
           <a href="https://miner.hummingbot.io/">Hummingbot Miner</a> around

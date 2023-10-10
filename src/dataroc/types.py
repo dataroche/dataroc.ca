@@ -21,6 +21,7 @@ class PortfolioHistory(TypedDict):
 
     # ms timestamp
     timestamp: int
+    updated_at: int
 
     market: MarketEnum
     interval: IntervalEnum
@@ -34,6 +35,23 @@ class PortfolioHistory(TypedDict):
 
     benchmark_eth_value: Decimal
     benchmark_eth_interval_pct_return: Decimal
+
+
+class Trade(TypedDict):
+    id: str
+
+    # ms timestamp
+    timestamp: int
+
+    market: MarketEnum
+    symbol: str
+    base_asset: str
+    quote_asset: str
+    is_buy: bool
+
+    amount: Decimal
+    price: Decimal
+    usd_value: Optional[Decimal]
 
 
 def datetime_to_ms(dt: datetime.datetime):

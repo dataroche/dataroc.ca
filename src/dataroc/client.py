@@ -1,5 +1,6 @@
 import os
 import math
+import enum
 from typing import Any, Optional, List, Union
 import jwt
 import postgrest
@@ -17,8 +18,12 @@ class DatarocClient:
     ):
         self.target_url = target_url
         self.role = role
-        headers = {"Authorization": f"Bearer {generate_jwt(target_url, role, jwt_secret=jwt_secret)}"}
-        self.client = postgrest.SyncPostgrestClient(self.target_url, schema="api", headers=headers, timeout=60)
+        headers = {
+            "Authorization": f"Bearer {generate_jwt(target_url, role, jwt_secret=jwt_secret)}"
+        }
+        self.client = postgrest.SyncPostgrestClient(
+            self.target_url, schema="api", headers=headers, timeout=60
+        )
         self._wake()
 
     def _wake(self):
@@ -40,14 +45,41 @@ class DatarocClient:
         )
         return resp.data
 
-    def insert_portfolio_histories(self, histories: List[dataroc.types.PortfolioHistory]):
-        self.client.from_table("portfolio_history").insert([serialize_data(h) for h in histories]).execute()
+    def read_latest_trade(
+        self, market: dataroc.types.MarketEnum
+    ) -> Optional[dataroc.types.Trade]:
+        resp = (
+            self.client.from_table("all_trades")
+            .select("*")
+            .eq("market", market.name)
+            .order("timestamp", desc=True)
+            .limit(1)
+            .execute()
+        )
+        rows = resp.data
+        return rows[0] if rows else None
 
-    def delete_portfolio_history(self, history: Union[dataroc.types.PortfolioHistory, int]):
+    def insert_portfolio_histories(
+        self, histories: List[dataroc.types.PortfolioHistory]
+    ):
+        self.client.from_table("portfolio_history").insert(
+            [serialize_data(h) for h in histories]
+        ).execute()
+
+    def insert_trades(self, trades: List[dataroc.types.Trade]):
+        self.client.from_table("all_trades").insert(
+            [serialize_data(h) for h in trades], upsert=True
+        ).execute()
+
+    def delete_portfolio_history(
+        self, history: Union[dataroc.types.PortfolioHistory, int]
+    ):
         id_to_delete = history["id"] if isinstance(history, dict) else history
         if not id_to_delete:
             raise ValueError(f"No id provided: {history}")
-        self.client.from_table("portfolio_history").delete().eq("id", id_to_delete).execute()
+        self.client.from_table("portfolio_history").delete().eq(
+            "id", id_to_delete
+        ).execute()
 
 
 def generate_jwt(target_url: str, role: str, jwt_secret: Optional[str] = None):
@@ -59,6 +91,8 @@ def generate_jwt(target_url: str, role: str, jwt_secret: Optional[str] = None):
 def serialize_data(data: Any):
     if isnan(data):
         return None
+    elif isinstance(data, enum.Enum):
+        return data.name
     elif isinstance(data, dict):
         return {key: serialize_data(value) for key, value in data.items()}
     else:

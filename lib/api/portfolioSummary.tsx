@@ -1,19 +1,32 @@
-import { apiFetch } from './api'
-
-import { camelizeKeys } from 'humps'
+import { apiFetch, useApiQuery } from './api'
 
 export interface PortfolioSummary {
   id: number
-  timestamp_s: number
+  timestampS: number
   market: string
   interval: string
   usdTotalValue: number
   usdHeld: number
   intervalPctReturn: number
+  usdRolling30dVolume: number
+  tradesCount30d: number
+  updatedAtS: number
 }
 
-export async function getPortfolioSummary(): Promise<PortfolioSummary> {
-  const response = await apiFetch('GET', '/portfolio_summary', {})
-  const data = camelizeKeys(response.data)
-  return data[0]
+const PORTFOLIO_SUMMARY_FETCH_ARGS = {
+  url: '/portfolio_summary',
+  asSingleJsonObject: true,
+}
+
+export function usePortfolioSummary(): PortfolioSummary | undefined {
+  const { data } = useApiQuery<PortfolioSummary>(PORTFOLIO_SUMMARY_FETCH_ARGS)
+  console.log(data)
+  return data
+}
+
+export async function getPortfolioSummaryServerSide() {
+  return await apiFetch<PortfolioSummary>({
+    ...PORTFOLIO_SUMMARY_FETCH_ARGS,
+    serverSide: true,
+  })
 }

@@ -1,35 +1,35 @@
 import axios from 'axios'
+import { camelizeKeys } from 'humps'
+import useSWR from 'swr'
 
-export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE'
+export type ApiProps = {
+  url: string
+  asSingleJsonObject?: boolean
+  serverSide?: boolean
+}
 
-const RETRY_WAIT = 1500
+export function apiFetch<Type>({
+  url,
+  asSingleJsonObject,
+  serverSide,
+}: ApiProps) {
+  const apiUrl = serverSide ? process.env.REACT_APP_API_URL + url : '/api' + url
+  const headers = {}
 
-/**
- *
- * @param {Method} method
- * @param {string} path
- * @param {Record<string, any>} data
- * @returns
- */
-export async function apiFetch(
-  method: Method,
-  path: string,
-  data: Record<string, object>,
-  retry: number = 3
-) {
-  try {
-    return await axios({
-      data,
-      headers: {},
-      method,
-      url: '/api' + path,
-    })
-  } catch (e) {
-    if (retry > 0) {
-      await new Promise((r) => setTimeout(r, RETRY_WAIT))
-      return await apiFetch(method, path, data, retry - 1)
-    } else {
-      throw e
-    }
+  if (asSingleJsonObject) {
+    headers['Accept'] = 'application/vnd.pgrst.object+json'
+  }
+
+  return axios.get<Type>(apiUrl, { headers }).then((res) => {
+    const data = camelizeKeys(res.data)
+    return data
+  })
+}
+
+export function useApiQuery<Type>(props: ApiProps) {
+  const { data, ...rest } = useSWR(props, apiFetch)
+  return {
+    data: data as Type,
+    ...rest,
   }
 }

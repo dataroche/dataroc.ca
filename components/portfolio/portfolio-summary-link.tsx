@@ -1,8 +1,6 @@
-'use client'
+import React from 'react'
 
-import React, { useState, useEffect } from 'react'
-
-import { getPortfolioSummary, PortfolioSummary } from 'lib/api/portfolioSummary'
+import { PortfolioSummary } from 'lib/api/portfolioSummary'
 
 type PercentReturnProps = {
   pctReturn: number
@@ -48,14 +46,11 @@ const PercentReturn = ({ pctReturn, decimals = 1 }: PercentReturnProps) => {
   )
 }
 
-export default function PortfolioSummaryLink() {
-  const [portfolioSummary, setPortfolioSummary] =
-    useState<PortfolioSummary | null>(null)
-
-  useEffect(() => {
-    getPortfolioSummary().then((summary) => setPortfolioSummary(summary))
-  }, [])
-
+export default function PortfolioSummaryLink({
+  portfolioSummary,
+}: {
+  portfolioSummary: PortfolioSummary
+}) {
   return (
     <a
       className="flex items-center transition-all dark:text-sky hover:opacity-70 no-underline"

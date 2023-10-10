@@ -1,10 +1,13 @@
 import PageTitle from 'components/page-title'
 import { ContactParagraph, LinkedInLink } from 'components/contact'
 import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link'
+import { getPortfolioSummaryServerSide } from 'lib/api/portfolioSummary'
 
 export const revalidate = 60
 
 export default async function HomePage() {
+  const portfolioSummary = await getPortfolioSummaryServerSide()
+
   return (
     <section className="max-w-[600px]">
       <PageTitle
@@ -29,7 +32,7 @@ export default async function HomePage() {
         <div className="space-y-2 text-neutral-500 dark:text-neutral-400">
           <ul className="flex flex-row items-center gap-2 space-x-4 space-y-0 font-sm text-neutral-500 ">
             <li>
-              <PortfolioSummaryLink />
+              <PortfolioSummaryLink portfolioSummary={portfolioSummary} />
             </li>
           </ul>
         </div>
