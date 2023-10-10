@@ -24,7 +24,7 @@ export function usePortfolioSummary(): PortfolioSummary | undefined {
 }
 
 export async function getPortfolioSummaryServerSide() {
-  const data = await apiFetch({
+  const data = await apiFetch<PortfolioSummary>({
     ...PORTFOLIO_SUMMARY_FETCH_ARGS,
     serverSide: true,
   })

@@ -9,7 +9,11 @@ export type ApiProps = {
 
 const SERVER_SIDE_CACHE_SECONDS = 10
 
-export function apiFetch({ url, asSingleJsonObject, serverSide }: ApiProps) {
+export function apiFetch<Type>({
+  url,
+  asSingleJsonObject,
+  serverSide,
+}: ApiProps) {
   const apiUrl = serverSide ? process.env.REACT_APP_API_URL + url : '/api' + url
   const headers = {}
 
@@ -21,7 +25,7 @@ export function apiFetch({ url, asSingleJsonObject, serverSide }: ApiProps) {
     headers,
     next: { revalidate: SERVER_SIDE_CACHE_SECONDS },
   })
-    .then((res) => res.json())
+    .then((res) => res.json() as Promise<Type>)
     .then((res) => {
       const data = camelizeKeys(res)
       return data
