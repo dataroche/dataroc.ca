@@ -1,4 +1,4 @@
-import { apiFetch, useApiQuery } from './api'
+import { apiFetch } from './api'
 
 export interface PortfolioSummary {
   id: number
@@ -16,17 +16,10 @@ export interface PortfolioSummary {
 const PORTFOLIO_SUMMARY_FETCH_ARGS = {
   url: '/portfolio_summary',
   asSingleJsonObject: true,
-}
-
-export function usePortfolioSummary(): PortfolioSummary | undefined {
-  const { data } = useApiQuery<PortfolioSummary>(PORTFOLIO_SUMMARY_FETCH_ARGS)
-  return data
+  serverSide: true,
 }
 
 export async function getPortfolioSummaryServerSide() {
-  const data = await apiFetch<PortfolioSummary>({
-    ...PORTFOLIO_SUMMARY_FETCH_ARGS,
-    serverSide: true,
-  })
+  const data = await apiFetch<PortfolioSummary>(PORTFOLIO_SUMMARY_FETCH_ARGS)
   return data
 }
