@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { camelizeKeys } from 'humps'
 import useSWR from 'swr'
 
@@ -8,11 +7,9 @@ export type ApiProps = {
   serverSide?: boolean
 }
 
-export function apiFetch<Type>({
-  url,
-  asSingleJsonObject,
-  serverSide,
-}: ApiProps) {
+const SERVER_SIDE_CACHE_SECONDS = 10
+
+export function apiFetch({ url, asSingleJsonObject, serverSide }: ApiProps) {
   const apiUrl = serverSide ? process.env.REACT_APP_API_URL + url : '/api' + url
   const headers = {}
 
@@ -20,10 +17,15 @@ export function apiFetch<Type>({
     headers['Accept'] = 'application/vnd.pgrst.object+json'
   }
 
-  return axios.get<Type>(apiUrl, { headers }).then((res) => {
-    const data = camelizeKeys(res.data)
-    return data
+  return fetch(apiUrl, {
+    headers,
+    next: { revalidate: SERVER_SIDE_CACHE_SECONDS },
   })
+    .then((res) => res.json())
+    .then((res) => {
+      const data = camelizeKeys(res)
+      return data
+    })
 }
 
 export function useApiQuery<Type>(props: ApiProps) {

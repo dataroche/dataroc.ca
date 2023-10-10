@@ -20,13 +20,13 @@ const PORTFOLIO_SUMMARY_FETCH_ARGS = {
 
 export function usePortfolioSummary(): PortfolioSummary | undefined {
   const { data } = useApiQuery<PortfolioSummary>(PORTFOLIO_SUMMARY_FETCH_ARGS)
-  console.log(data)
   return data
 }
 
 export async function getPortfolioSummaryServerSide() {
-  return await apiFetch<PortfolioSummary>({
+  const data = await apiFetch({
     ...PORTFOLIO_SUMMARY_FETCH_ARGS,
     serverSide: true,
   })
+  return data
 }
