@@ -1,5 +1,4 @@
 import { camelizeKeys } from 'humps'
-import useSWR from 'swr'
 
 export type ApiProps = {
   url: string
@@ -47,12 +46,4 @@ export function apiFetch<Type>(props: ApiProps, retry: number = 3) {
       const data = camelizeKeys(res)
       return data
     })
-}
-
-export function useApiQuery<Type>(props: ApiProps) {
-  const { data, ...rest } = useSWR(props, apiFetch)
-  return {
-    data: data as Type,
-    ...rest,
-  }
 }

@@ -1,4 +1,4 @@
-import { useApiQuery } from './api'
+import { useApiQuery } from './use-api'
 
 import dayjs from 'lib/dayjs'
 

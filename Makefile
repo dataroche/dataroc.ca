@@ -17,3 +17,6 @@ postgrest:
 
 postgres-prod-proxy:
 	fly proxy 15432:5432 -a dataroc-db
+
+migrate-prod:
+	source .env.prod.local && graphile-migrate migrate

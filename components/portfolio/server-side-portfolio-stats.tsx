@@ -7,14 +7,16 @@ import dayjs from 'lib/dayjs'
 export function LastUpdatedAt({
   portfolioSummary,
 }: {
-  portfolioSummary: PortfolioSummary | undefined
+  portfolioSummary: PortfolioSummary
 }) {
   const lastUpdateDayJs =
-    portfolioSummary &&
-    dayjs.unix(portfolioSummary.timestampS).format('ddd, D MMM YYYY')
+    portfolioSummary && dayjs.unix(portfolioSummary.updatedAtS)
+
+  const formatted = lastUpdateDayJs.fromNow()
+  // lastUpdateDayJs && lastUpdateDayJs.format('ddd, D MMM YYYY [at] h:mm A')
 
   return lastUpdateDayJs ? (
-    <p className="italic">{`Last updated: ${lastUpdateDayJs}`}</p>
+    <p className="italic">{`Last updated ${formatted}`}</p>
   ) : (
     <p>
       <span className="h-2 bg-slate-200 rounded w-10" />
