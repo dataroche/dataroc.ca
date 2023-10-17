@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
             marginLeft: 190,
             marginRight: 190,
             marginBottom: 300,
+            padding: '70px 0',
             display: 'flex',
             fontSize: 80,
             fontFamily: 'Fragment Mono',

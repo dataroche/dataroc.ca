@@ -26,11 +26,11 @@ export const metadata: Metadata = {
     url: 'https://dataroc.ca',
     siteName,
     images: [
-      // {
-      //   url: 'https://dataroc.ca/og.jpg',
-      //   width: 1920,
-      //   height: 1080,
-      // },
+      {
+        url: 'https://dataroc.ca/og-bg.png',
+        width: 1920,
+        height: 1080,
+      },
     ],
     locale: 'en-US',
     type: 'website',
