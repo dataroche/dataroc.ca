@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Fragment_Mono } from 'next/font/google'
 import Sidebar from '../components/sidebar'
 import { Analytics } from '@vercel/analytics/react'
+import { ConvertKitSignupForm } from 'components/convert-kit-signup-form'
 
 const textFont = Fragment_Mono({
   weight: '400',
@@ -66,6 +67,7 @@ export default function RootLayout({
         <main className="flex-auto min-w-0 mt-6 md:mt-0 flex flex-col px-2 md:px-0">
           {children}
           <Analytics />
+          <ConvertKitSignupForm />
         </main>
       </body>
     </html>
