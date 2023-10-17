@@ -28,7 +28,7 @@ export async function generateMetadata({
   } = post
   const ogImage = image
     ? `https://dataroc.ca${image}`
-    : `https://dataroc.ca/api/og?title=${title}`
+    : `https://dataroc.ca/og?title=${title}`
 
   return {
     title,

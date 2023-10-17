@@ -7,6 +7,7 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   experimental: {
+    serverActions: true,
     esmExternals: "loose"
   },
   redirects() {

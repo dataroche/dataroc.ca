@@ -30,7 +30,7 @@ const computedFields = {
       description: doc.summary,
       image: doc.image
         ? `https://dataroc.ca${doc.image}`
-        : `https://dataroc.ca/api/og?title=${doc.title}`,
+        : `https://dataroc.ca/og?title=${doc.title}`,
       url: `https://dataroc.ca/blog/${doc._raw.flattenedPath}`,
       author: {
         '@type': 'Person',
