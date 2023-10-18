@@ -1,6 +1,6 @@
 import { ArrowIcon } from 'components/icons'
 
-import { ConvertKitSignupLink } from './convert-kit-signup-form'
+import EmailSignupLink from './email-signup-link'
 
 export const LinkedInLink = ({ text }: { text?: string }) => {
   return (
@@ -22,7 +22,7 @@ export function ContactParagraph() {
       <p className="mt-10 font-light text-sm ">
         For work inquiries or simple chit-chat, reach out on <LinkedInLink />
       </p>
-      <ConvertKitSignupLink />
+      <EmailSignupLink />
     </div>
   )
 }
