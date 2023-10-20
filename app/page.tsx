@@ -72,7 +72,8 @@ export default async function HomePage() {
       <p className="my-5">
         When I'm not coding, I'm probably playing volley ball 🏐, dancing salsa
         🕺, but (who am I kidding) I'm probably coding. I love to travel, meet
-        new people and experience extraordinary food. Next up: Denmark!
+        new people and experience extraordinary food. Latest travels: Denmark,
+        the Canary Islands and London.
       </p>
       <h2 className="my-5" id="why-dataroc">
         Why dataroc?

@@ -1,5 +1,5 @@
 ---
-title: '28th of November 2021: The FTX burn'
+title: '28th of November 2021: The FXS burn'
 publishedAt: '2023-04-17'
 summary: 'On November 28 2021, one of my liquidity mining bot on AscendEx got solidly burned by my lack of protection around buy/sell prices.'
 ---
@@ -36,37 +36,37 @@ Here's how my returns looked like on November 28:
   You might notice a slight drop by the end...
 </small>
 
-## The Burn: FTX/USDT trading pair
+## The Burn: FXS/USDT trading pair
 
-I had started trading on the FTX/USDT pair a few days prior. It was doing OK, very few
+I had started trading on the FXS/USDT pair a few days prior. It was doing OK, very few
 trades, tight spreads.
 
 On November 28th, it so happens that I was looking at the order book at the end of
 the afternoon. I noticed something interesting: there were no ask orders. None. No one
-had any open orders to sell FTX. Being my naive self I thought: wow that's interesting.
+had any open orders to sell FXS. Being my naive self I thought: wow that's interesting.
 
 My bot was looking at a specific number to place orders: the mid price. I.e. half-way
 between the top bid and top ask. If the best ask is $20.01, and the best bid is $19.99,
 the mid price is $20.00. Easy enough.
 
 What happened next is that someone posted a market ask order at $1000. I saw it live.
-Essentially saying _"You know this token called FTX that just traded at $20.50? Well I'm
+Essentially saying _"You know this token called FXS that just traded at $20.50? Well I'm
 happy to sacrifice myself and buy your tokens for the low price of $1000."_. You might
 see where this is going...
 
 What's the mid price when the best bid is $20 and the best ask $1000? **$490**. My bot being
 the clever thing it is, decided to do what it does best and post a great bid order at
 0.01% of the mid price: $489.51. Saying in return _"You think $1000 is a great price?
-Well then I don't mind buying FTX at $489.51 then."_
+Well then I don't mind buying FXS at $489.51 then."_
 
 <img
   src="/images/ftx-burn-candles.png"
-  alt="FTX/USDT candles around time of the incident"
+  alt="FXS/USDT candles around time of the incident"
 />
 <small>
-  The daily FTX/USDT candles around November 2021. See that ridiculous high
+  The daily FXS/USDT candles around November 2021. See that ridiculous high
   candle on Nov 28th? This is a log-scale by the way. But who could've bought
-  FTX at such an awful price?
+  FXS at such an awful price?
 </small>
 
 Then what had to happen happened: someone saw that, sold their tokens to my unsuspecting
@@ -74,7 +74,7 @@ bot. And then my unsuspecting bot decided to open more buy orders because it sti
 USDT to spare!
 
 It took me about 20 seconds to realize what was happening and franctically stop my bot
-ASAP. By then, the damage was done and I was holding 2 FTX token worth around $40. I had
+ASAP. By then, the damage was done and I was holding 2 FXS token worth around $40. I had
 payed close to $1000 for those.
 
 ## The Fallout
