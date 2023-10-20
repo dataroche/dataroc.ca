@@ -78,11 +78,22 @@ export default async function CryptoBotsPage() {
             </p>
           ))}
         </div>
-        <h2 className="my-5">Want to see more?</h2>
+        <h2 className="my-5">Want to learn on this page works?</h2>
         <p className="mb-5">
           This page is the end product of multiple pieces of code working
-          together! If you're curious of the technical challenges behind this
-          page, <a href="/blog/introducing-bots-perf">head over here</a>.
+          together! I have some posts that explains how this page works:
+          <ul>
+            <li>
+              <a href="/blog/introducing-bots-perf">
+                Overview of the architecture
+              </a>
+            </li>
+            <li>
+              <a href="/blog/using-postgrest-as-an-sql-defined-api">
+                Using PostgREST as an SQL-defined API
+              </a>
+            </li>
+          </ul>
         </p>
         <ContactParagraph />
       </div>

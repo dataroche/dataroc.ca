@@ -1,0 +1,313 @@
+---
+title: 'Using PostgREST as a high-performance, SQL-defined API'
+publishedAt: '2023-10-19'
+summary: 'PostgREST (not Postgres) is a high-performance REST API framework that sits on top of your PostgreSQL database. Endpoints, permissions and CRUD operations are all defined by your SQL schema.'
+---
+
+I recently discovered [PostgREST](https://postgrest.org/) and it's been quite a love
+story. Previously, when I needed a simple API, I would build a Flask or FastAPI Python
+app and point it to my database. This worked fine, but required SQL migrations and
+scaffolding, then SQLAlchemy models (most probably), then API endpoints for read,
+listing operations. If I wanted some interactivity with write operations, those I would
+need to build the API endpoints on a case-by-case basis.
+
+Using PostgREST, everything is standardized and defined in SQL. You get built-in openapi
+documentation, JWT authentication and your SQL schema completely defines the permissions
+and views of your REST API. You define views in your PostgreSQL database, point the
+PostgREST server to it and BAM. High performance REST API.
+
+All the [dynamic content from my live portfolio](/crypto-bots) is served off a
+PostgREST API. This post aims to summarize the different views currently exposed by the
+API and how the schema defines those views. In a future post, I will highlight how the
+portfolio data gets inserted in the database using the UPDATE endpoints that PostgREST
+has to offer.
+
+# The basics
+
+## Scaffolding PostgREST permissions
+
+The first thing to do when creating your PostgREST API is to create the appropriate
+database users. PostgREST requires a special authenticator role: all database calls
+start of as the authenticator and based on the callee permissions, a new role will be
+impersonated. As the PostgREST documentation puts it:
+
+> [The authenticator role] is a chameleon whose job is to “become” other users to
+> service authenticated HTTP requests.
+
+```sql
+CREATE ROLE authenticator LOGIN NOINHERIT NOCREATEDB NOCREATEROLE NOSUPERUSER;
+ALTER USER authenticator PASSWORD 'great-password';
+```
+
+Then, you need to create your API roles. The website currently has 2 roles: the
+anonymous role (you) and the data producer role. I will cover the data producer role in
+another post.
+
+```sql
+CREATE ROLE api_anon nologin;
+GRANT api_anon TO authenticator;
+
+CREATE ROLE api_data_producer nologin;
+GRANT api_data_producer TO authenticator;
+```
+
+We will cover shortly how to tell PostgREST about these role names. These previous steps
+I usually do outside of database migration control: they are pre-requisites to building
+out the database schema from scratch, in addition to `CREATE DATABASE ...` statements.
+
+## Creating the API schema
+
+Once we have the basic scaffolding in place, we can now create our first view! One thing
+that is crucial for PostgREST is to define the public database schema. Anything
+contained in this schema is scanned by PostgREST and possibly exposed through the API.
+
+I decided to call this schema `api`. Additionnaly as a test, you can create the simplest
+hello world endpoint:
+
+```sql
+CREATE SCHEMA api;
+
+GRANT USAGE on SCHEMA api to api_anon;
+
+CREATE VIEW api.hello_world AS (
+    SELECT 'hello world'
+);
+```
+
+## Running PostgREST
+
+Since the PostgREST server simply looks at your database schema to build the REST API,
+you never need to deploy the service when making changes! This is one of the great
+strengths of PostgREST: migrate your database to a new version and the API will follow.
+
+Here is how I locally run the server using the postgrest docker image:
+
+```sh
+docker run --rm --net=host \
+		-e PGRST_DB_URI="${PGRST_DB_URI}" \
+		-e PGRST_JWT_SECRET="${PGRST_JWT_SECRET}" \
+		-e PGRST_SERVER_PORT=5001 \
+		-e PGRST_DB_SCHEMA=api \
+		-e PGRST_DB_ANON_ROLE=api_anon \
+		postgrest/postgrest
+```
+
+A quick rundown of the environment variables:
+
+- PGRST_DB_URI: This is the database URI to connect to. It should use the
+  `authenticator` user and password.
+- PGRST_JWT_SECRET: In my setup, I am using a symetrical encryption key to secure the
+  data producer role. PostgREST needs to know that key to verify authenticated calls.
+- PGRST_SERVER_PORT: The port on which the server runs.
+- PGRST_DB_SCHEMA: The database schema that is exposed as a REST API. All other schemas
+  are hidden.
+- PGRST_DB_ANON_ROLE: The role to use for unauthenticated calls, as defined in our
+  scaffolding. For authenticated calls, the HTTP headers contain the name of the role.
+
+Once this is up and running, you should be able to get the openapi spec from the
+http://localhost:5001 endpoint.
+
+And the hello world from `http://localhost:5001/hello_world`, since we named the table
+`hello_world`.
+
+# My live portfolio endpoints
+
+## Weekly performance history
+
+The first view I added to the portfolio is the weekly performance history.
+It is based off a table named `portfolio_history`:
+
+```sql
+CREATE TYPE market_enum as enum('kraken');
+
+CREATE TYPE interval_enum as enum('week', 'day');
+
+CREATE TABLE portfolio_history (
+    id SERIAL NOT NULL,
+    timestamp BIGINT NOT NULL,
+    updated_at BIGINT,
+    market market_enum,
+    interval interval_enum,
+    usd_total_value NUMERIC(48, 18),
+    usd_held NUMERIC(48, 18),
+    interval_pct_return NUMERIC(48, 18),
+    benchmark_btc_value NUMERIC(48, 18),
+    benchmark_btc_interval_pct_return NUMERIC(48, 18),
+    benchmark_eth_value NUMERIC(48, 18),
+    benchmark_eth_interval_pct_return NUMERIC(48, 18),
+    PRIMARY KEY (id)
+);
+```
+
+I'm only using the `week` interval at the moment. The source of this data is from a
+local script that runs every hour. It uses the api_data_producer role; the details of
+which are for another post!
+
+Since the table is not defined in the `api` schema, and since no PostgREST-facing role
+has permissions to read from it, it's a private table right now. The official PostgREST
+documentation recommends to only expose VIEWs and not tables. This makes it easier to
+change these views if the need arises, and creates a layer of abstraction between the
+API contract and the data structure.
+
+Let's create a public view on top of it:
+
+```sql
+CREATE VIEW api.portfolio_history AS (
+    SELECT
+        *
+    FROM
+        portfolio_history
+);
+
+GRANT
+SELECT
+    on api.portfolio_history to api_anon;
+```
+
+One note here. If you want the PostgREST server to pick-up on changes and clear it's
+cache, you can send a special notification:
+
+```sql
+-- Notify postgREST of a schema change
+NOTIFY pgrst, 'reload schema';
+```
+
+I append this notification at the end of all my migration scripts.
+
+Then, you have a live portfolio_history endpoint:
+https://www.dataroc.ca/api/portfolio_history?order=timestamp_s.asc
+
+## Summarized stats
+
+I recently added stats to the performance page. They are sprinkled throughout the text:
+number of trades, trade volume, last update timestamp, etc.
+
+This is where it gets more interesting. The API schema as served to the frontend differs
+a lot from the backing data, which is a list of trades. This is where PostgREST really
+shines: based on raw data, I can create a stats endpoint entirely written in SQL.
+
+The view is based on a trades table:
+
+```sql
+CREATE TABLE trades (
+    id TEXT NOT NULL,
+    timestamp BIGINT NOT NULL,
+    market market_enum NOT NULL,
+    symbol TEXT NOT NULL,
+    base_asset TEXT NOT NULL,
+    quote_asset TEXT NOT NULL,
+    is_buy BOOL NOT NULL,
+    amount NUMERIC(48, 18) NOT NULL,
+    price NUMERIC(48, 18) NOT NULL,
+    usd_value NUMERIC(48, 18) NOT NULL,
+    PRIMARY KEY (id)
+);
+```
+
+I then give the data producer role access to write to this table (through a view still):
+
+```sql
+-- Restricted access to api_data_producer
+CREATE VIEW api.all_trades AS (
+    SELECT
+        *
+    FROM
+        trades
+);
+
+GRANT SELECT, INSERT, UPDATE ON api.all_trades to api_data_producer;
+```
+
+For fun, I create a redacted latest_trades endpoints for the public:
+
+```sql
+-- public view (last 100 trades only, redacted symbol except for ETH and BTC)
+CREATE VIEW api.latest_trades AS (
+    SELECT
+        id,
+        timestamp,
+        market,
+        CASE
+            WHEN base_asset IN ('ETH', 'BTC') THEN base_asset
+            ELSE '???'
+        END as redacted_base_asset,
+        quote_asset,
+        is_buy,
+        amount,
+        price,
+        usd_value
+    FROM
+        trades
+    ORDER BY timestamp DESC
+    LIMIT 100
+);
+
+GRANT
+SELECT
+    on api.latest_trades to api_anon;
+
+```
+
+Try it: https://www.dataroc.ca/api/latest_trades. The redacted symbol is not much on its
+own, since you can reasonably guess the pair using the price and timestamp. That's a
+challenge to you the reader: decode one of the redacted pairs I'm trading on!
+
+And then I create the stats endpoint:
+
+```sql
+CREATE VIEW api.portfolio_summary AS (
+    WITH last_history AS (
+        SELECT
+            id,
+            TO_TIMESTAMP(timestamp / 1000) as last_timestamp,
+            timestamp / 1000 as timestamp_s,
+            market,
+            interval,
+            usd_total_value,
+            usd_held,
+            interval_pct_return,
+            benchmark_btc_value,
+            benchmark_btc_interval_pct_return,
+            benchmark_eth_value,
+            benchmark_eth_interval_pct_return,
+            updated_at / 1000 as updated_at_s
+        FROM portfolio_history
+        ORDER BY timestamp DESC
+        LIMIT 1
+    )
+
+    SELECT
+        *,
+        (
+            SELECT SUM(usd_value)
+            FROM trades
+            WHERE
+                TO_TIMESTAMP(timestamp / 1000) > (
+                    TO_TIMESTAMP(updated_at_s) - INTERVAL '30 DAY'
+                )
+        ) as usd_rolling_30d_volume,
+        (
+            SELECT COUNT(*)
+            FROM trades
+            WHERE
+                TO_TIMESTAMP(timestamp / 1000) > (
+                    TO_TIMESTAMP(updated_at_s) - INTERVAL '30 DAY'
+                )
+        ) as trades_count_30d
+    FROM last_history
+);
+
+GRANT SELECT on api.portfolio_summary to api_anon;
+```
+
+This gets the last portfolio_history entry which contains the portfolio value and the
+updated at timestamp. In addition, it computes the number of trades and the total value
+in USD of these trades based on the new trades table!
+
+Try it out: https://www.dataroc.ca/api/portfolio_summary
+
+# Conclusion
+
+PostgREST is a simple and effective way to build an SQL-defined API on top of your
+PostgreSQL database. The performance is great and the memory footprint minimal. You can
+read more about users of the project here: https://postgrest.org/en/stable/#testimonials
