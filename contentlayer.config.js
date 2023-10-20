@@ -29,9 +29,9 @@ const computedFields = {
       dateModified: doc.publishedAt,
       description: doc.summary,
       image: doc.image
-        ? `https://dataroc.ca${doc.image}`
-        : `https://dataroc.ca/og?title=${doc.title}`,
-      url: `https://dataroc.ca/blog/${doc._raw.flattenedPath}`,
+        ? `https://www.dataroc.ca${doc.image}`
+        : `https://www.dataroc.ca/og?title=${doc.title}`,
+      url: `https://www.dataroc.ca/blog/${doc._raw.flattenedPath}`,
       author: {
         '@type': 'Person',
         name: 'William Laroche',

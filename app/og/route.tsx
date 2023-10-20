@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   ).then((res) => res.arrayBuffer())
   const fontData = await font
 
-  const imageHost = 'https://dataroc.ca'
+  const imageHost = 'https://www.dataroc.ca'
   const imageUrl = imageHost + (postTitle ? '/og-bg-title.png' : '/og-bg.png')
 
   return new ImageResponse(

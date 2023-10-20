@@ -23,11 +23,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: siteName,
     description,
-    url: 'https://dataroc.ca',
+    url: 'https://www.dataroc.ca',
     siteName,
     images: [
       {
-        url: 'https://dataroc.ca/og-bg.png',
+        url: 'https://www.dataroc.ca/og-bg.png',
         width: 1920,
         height: 1080,
       },

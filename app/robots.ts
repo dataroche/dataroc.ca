@@ -5,7 +5,7 @@ export default function robots() {
         userAgent: '*',
       },
     ],
-    sitemap: 'https://dataroc.ca/sitemap.xml',
-    host: 'https://dataroc.ca',
+    sitemap: 'https://www.dataroc.ca/sitemap.xml',
+    host: 'https://www.dataroc.ca',
   }
 }

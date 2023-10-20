@@ -27,8 +27,8 @@ export async function generateMetadata({
     slug,
   } = post
   const ogImage = image
-    ? `https://dataroc.ca${image}`
-    : `https://dataroc.ca/og?title=${title}`
+    ? `https://www.dataroc.ca${image}`
+    : `https://www.dataroc.ca/og?title=${title}`
 
   return {
     title,
@@ -38,7 +38,7 @@ export async function generateMetadata({
       description,
       type: 'article',
       publishedTime,
-      url: `https://dataroc.ca/blog/${slug}`,
+      url: `https://www.dataroc.ca/blog/${slug}`,
       images: [
         {
           url: ogImage,
