@@ -80,6 +80,14 @@ ul {
   margin-bottom: 1.25em !important;
 }
 
+.prose ul {
+  @apply marker:text-neutral-200;
+}
+
+.prose blockquote {
+  @apply border-l-sky;
+}
+
 .blink-prompt {
   animation: 1.06s blinker linear 3;
 }
