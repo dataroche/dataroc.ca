@@ -3,7 +3,7 @@ import { ArrowIcon } from 'components/icons'
 export const LinkedInLink = ({ text }: { text?: string }) => {
   return (
     <a
-      className="inline-flex items-center flex-row transition-all dark:text-sky hover:opacity-70 mx-1"
+      className="inline-flex items-baseline flex-row transition-all dark:text-sky hover:opacity-70 no-underline mx-1"
       rel="noopener noreferrer"
       target="_blank"
       href="https://www.linkedin.com/in/william-laroche/?locale=en_US"

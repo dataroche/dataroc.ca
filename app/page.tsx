@@ -35,10 +35,7 @@ export default async function HomePage() {
         </InlineCTAWithArrow>
         <p className="my-5">
           I love to compile and analyze crypto markets data. My{' '}
-          <a
-            className="dark:text-sky hover:opacity-70 no-underline"
-            href="/blog/how-crypto-exchanges-perform-under-load"
-          >
+          <a href="/blog/how-crypto-exchanges-perform-under-load">
             latest blog
           </a>{' '}
           explores the latency of different crypto exchanges and the
@@ -65,18 +62,9 @@ export default async function HomePage() {
         </h2>
         <p>
           The avatar is named SOLeNOID and is the result of the creative genius
-          of{' '}
-          <a
-            className="dark:text-sky underline"
-            href="https://twitter.com/Logic_Beach"
-          >
-            @logicbeach.eth
-          </a>
-          . It's the only NFT I possess, and proudly so! You can find{' '}
-          <a
-            className="dark:text-sky underline"
-            href="https://opensea.io/collection/logicbots-u1"
-          >
+          of <a href="https://twitter.com/Logic_Beach">@logicbeach.eth</a>. It's
+          the only NFT I possess, and proudly so! You can find{' '}
+          <a href="https://opensea.io/collection/logicbots-u1">
             the whole collection here
           </a>
           . It's also the basis of this website's color palette.
