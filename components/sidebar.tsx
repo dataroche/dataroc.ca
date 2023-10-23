@@ -49,10 +49,10 @@ export default function Navbar() {
       <div className="lg:sticky lg:top-20">
         <LayoutGroup>
           <nav
-            className="flex flex-row md:flex-col items-center md:items-start relative px-4 md:px-0 pb-0 fade md:overflow-auto scroll-pr-6 md:relative flex-wrap"
+            className="flex flex-row md:flex-col items-center md:items-start relative px-4 md:px-0 pb-0 fade md:overflow-auto scroll-pr-6 md:relative flex-wrap gap-4"
             id="nav"
           >
-            <div className="mb-2 px-4 md:px-0 md:mb-8 space-y-2 flex flex-col md:flex-row items-start ">
+            <div className="mb-2 md:px-0 md:mb-8 space-y-2 flex flex-col md:flex-row items-start ">
               <Logo />
             </div>
             <div className="flex flex-row md:flex-col space-x-0 pr-10 mb-2 mt-2 md:mt-0">

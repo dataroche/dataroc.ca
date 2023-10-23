@@ -13,8 +13,8 @@ export default async function HomePage() {
     <section>
       <PageTitle
         subTitle={
-          <span className="flex flex-row gap-5">
-            <p>Open to work</p>
+          <span className="flex flex-row md:gap-5 flex-wrap">
+            <p className="whitespace-nowrap mr-2">Open to work</p>
             <LinkedInLink text="connect on linked in" />
           </span>
         }
