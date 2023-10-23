@@ -52,15 +52,8 @@ export default function PortfolioSummaryLink({
   portfolioSummary: PortfolioSummary
 }) {
   return (
-    <a
-      className="flex items-center transition-all dark:text-sky hover:opacity-70 no-underline"
-      href="/crypto-bots"
-    >
-      <div
-        className={`${
-          portfolioSummary ? '' : 'animate-pulse'
-        } flex flex-col w-40 highlight-box`}
-      >
+    <a className="cta-container" href="/crypto-bots">
+      <div className={`${portfolioSummary ? '' : 'animate-pulse'} cta-box`}>
         <div className="flex flex-row items-center justify-between text-sm uppercase">
           <div>Bots perf.</div>
           {portfolioSummary ? (

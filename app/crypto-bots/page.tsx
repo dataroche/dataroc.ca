@@ -31,7 +31,7 @@ export default async function CryptoBotsPage() {
   )
 
   return (
-    <section className="max-w-[600px]">
+    <section>
       <PageTitle
         subTitle={<LastUpdatedAt portfolioSummary={portfolioSummary} />}
       >
@@ -78,7 +78,7 @@ export default async function CryptoBotsPage() {
             </p>
           ))}
         </div>
-        <h2 className="my-5">Want to learn on this page works?</h2>
+        <h2 className="my-5">Want to learn how this page works?</h2>
         <p className="mb-5">
           This page is the end product of multiple pieces of code working
           together! I have some posts that explains how this page works:

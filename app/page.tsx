@@ -2,6 +2,7 @@ import PageTitle from 'components/page-title'
 import { ContactParagraph, LinkedInLink } from 'components/contact'
 import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link'
 import { getPortfolioSummaryServerSide } from 'lib/api/portfolioSummary'
+import InlineCTAWithArrow from 'components/inline-cta-with-arrow'
 
 export const revalidate = 60
 
@@ -9,7 +10,7 @@ export default async function HomePage() {
   const portfolioSummary = await getPortfolioSummaryServerSide()
 
   return (
-    <section className="max-w-[600px]">
+    <section>
       <PageTitle
         subTitle={
           <span className="flex flex-row gap-5">
@@ -28,33 +29,9 @@ export default async function HomePage() {
         As a side-project for the past 2 years, I've been automating market
         making strategies on crypto exchanges.{' '}
       </p>
-      <div className="flex items-center my-8 flex-row">
-        <div className="space-y-2 text-neutral-500 dark:text-neutral-400">
-          <ul className="flex flex-row items-center gap-2 space-x-4 space-y-0 font-sm text-neutral-500 ">
-            <li>
-              <PortfolioSummaryLink portfolioSummary={portfolioSummary} />
-            </li>
-          </ul>
-        </div>
-
-        <span className="mx-4 inline text-neutral-500 dark:text-neutral-200">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="w-6 h-6  inline"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
-          </svg>
-        </span>
-        <p className="text-sm">My market making portfolio</p>
-      </div>
+      <InlineCTAWithArrow arrowText="My market making portfolio">
+        <PortfolioSummaryLink portfolioSummary={portfolioSummary} />
+      </InlineCTAWithArrow>
       <p className="my-5">
         I love to compile and analyze crypto markets data. My{' '}
         <a

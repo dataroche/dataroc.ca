@@ -2,6 +2,7 @@ import './global.css'
 import type { Metadata } from 'next'
 import { Fragment_Mono } from 'next/font/google'
 import Sidebar from '../components/sidebar'
+import Topbar from '../components/topbar'
 import { Analytics } from '@vercel/analytics/react'
 
 const textFont = Fragment_Mono({
@@ -60,10 +61,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`dark ${textFont.className}`}>
-      <body className="prose-invert bg-blue  antialiased max-w-4xl mb-40 flex flex-col md:flex-row mx-4 mt-8 md:mt-20 lg:mt-32 lg:mx-auto">
+    <html lang="en" className={`${textFont.className}`}>
+      <body className="prose-invert bg-blue antialiased max-w-4xl mb-40 flex flex-col md:flex-row mx-4 mt-16 md:mt-20 lg:mt-32 lg:mx-auto">
+        <Topbar />
         <Sidebar />
-        <main className="flex-auto min-w-0 mt-6 md:mt-0 flex flex-col px-2 md:px-0">
+        <main className="dark flex-auto min-w-0 mt-6 md:mt-0 flex flex-col px-2 md:px-0">
           {children}
           <Analytics />
         </main>

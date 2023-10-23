@@ -5,6 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useMDXComponent } from 'next-contentlayer/hooks'
 import PlotPlaceholder from './plot-placeholder'
+import InlineCTAWithArrow from './inline-cta-with-arrow'
+import EmailSignupLink from './email-signup-link'
 
 const StaticPlotlyChart = dynamic(() => import('./static-plotly-chart'), {
   ssr: false,
@@ -71,6 +73,17 @@ function ProsCard({ title, pros }) {
   )
 }
 
+export function SubscribeCTA() {
+  return (
+    <InlineCTAWithArrow
+      arrowText="Never miss a new post"
+      containerClassName="justify-center"
+    >
+      <EmailSignupLink />
+    </InlineCTAWithArrow>
+  )
+}
+
 function ConsCard({ title, cons }) {
   return (
     <div className="border border-red-200 dark:border-red-900 bg-neutral-50 dark:bg-neutral-900 rounded-xl p-6 my-6 w-full">
@@ -103,6 +116,7 @@ const components = {
   ProsCard,
   ConsCard,
   StaticPlotlyChart,
+  SubscribeCTA,
 }
 
 interface MdxProps {

@@ -45,16 +45,16 @@ export default function Navbar() {
   }
 
   return (
-    <aside className="md:w-[150px] md:flex-shrink-0 -mx-4 md:mx-0 md:px-0 ">
+    <aside className="dark md:w-[150px] md:flex-shrink-0 -mx-4 md:mx-0 md:px-0 ">
       <div className="lg:sticky lg:top-20">
-        <div className="mb-2 px-4 md:px-0 md:mb-8 space-y-10 flex flex-col md:flex-row items-start ">
-          <Logo />
-        </div>
         <LayoutGroup>
           <nav
-            className="flex flex-row md:flex-col items-start relative px-4 md:px-0 pb-0 fade md:overflow-auto scroll-pr-6 md:relative"
+            className="flex flex-row md:flex-col items-center md:items-start relative px-4 md:px-0 pb-0 fade md:overflow-auto scroll-pr-6 md:relative flex-wrap"
             id="nav"
           >
+            <div className="mb-2 px-4 md:px-0 md:mb-8 space-y-2 flex flex-col md:flex-row items-start ">
+              <Logo />
+            </div>
             <div className="flex flex-row md:flex-col space-x-0 pr-10 mb-2 mt-2 md:mt-0">
               {Object.entries(navItems).map(([path, { name }]) => {
                 const isActive = path === pathname

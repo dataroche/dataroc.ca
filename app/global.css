@@ -176,3 +176,19 @@ table {
 [data-rehype-pretty-code-title] + pre {
   @apply mt-0 rounded-t-none border-t-0;
 }
+
+.full-bleed {
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+.cta-container {
+  @apply flex items-center transition-all dark:text-sky hover:opacity-70 no-underline;
+}
+
+.cta-box {
+  @apply flex flex-col w-40 highlight-box;
+}
