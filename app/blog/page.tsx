@@ -23,11 +23,13 @@ export default async function BlogPage() {
         .map((post) => (
           <Link
             key={post.slug}
-            className="flex flex-col space-y-1 mb-4"
+            className="flex flex-col space-y-1 mb-4 "
             href={`/blog/${post.slug}`}
           >
             <div className="w-full flex flex-col">
-              <p>{post.title}</p>
+              <p>
+                <span className="text-sky">{post.title}</span>
+              </p>
               <p className="italic">Posted on {post.publishedAt}</p>
             </div>
           </Link>
