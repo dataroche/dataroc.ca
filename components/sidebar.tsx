@@ -55,7 +55,7 @@ export default function Navbar() {
             <div className="mb-2 md:px-0 md:mb-8 space-y-2 flex flex-col md:flex-row items-start ">
               <Logo />
             </div>
-            <div className="flex flex-row md:flex-col space-x-0 pr-10 mb-2 mt-2 md:mt-0">
+            <div className="flex flex-row md:flex-col space-x-0 mb-2 mt-2 md:mt-0">
               {Object.entries(navItems).map(([path, { name }]) => {
                 const isActive = path === pathname
                 return (
