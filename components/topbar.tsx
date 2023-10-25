@@ -15,7 +15,6 @@ const useShouldShowTopbar = () => {
       window.innerHeight + Math.round(window.scrollY) >=
       document.body.offsetHeight
 
-    console.log(isBottom)
     const delta = window.scrollY - y
     setShouldShow(window.scrollY < 50 || delta < 0 || isBottom)
     setY(window.scrollY)

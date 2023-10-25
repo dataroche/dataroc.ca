@@ -63,9 +63,13 @@ export default async function Blog({ params }) {
 
   return (
     <section>
-      <script type="application/ld+json">
-        {JSON.stringify(post.structuredData)}
-      </script>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(post.structuredData),
+        }}
+      ></script>
       <h1 className="font-bold text-3xl">
         <Balancer>{post.title}</Balancer>
       </h1>
