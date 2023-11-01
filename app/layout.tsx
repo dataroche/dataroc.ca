@@ -1,11 +1,9 @@
 import './global.css'
 import type { Metadata } from 'next'
-import Head from 'next/head'
 import { Fragment_Mono } from 'next/font/google'
 import Sidebar from '../components/sidebar'
 import Topbar from '../components/topbar'
 import GoogleAnalytics from '../components/google-analytics'
-import { Analytics } from '@vercel/analytics/react'
 
 const textFont = Fragment_Mono({
   weight: '400',
