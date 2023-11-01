@@ -74,6 +74,8 @@ GRANT USAGE on SCHEMA api to api_anon;
 CREATE VIEW api.hello_world AS (
     SELECT 'hello world'
 );
+
+GRANT SELECT on api.hello_world to api_anon;
 ```
 
 ## Running PostgREST
@@ -147,7 +149,7 @@ which are for another post!
 
 Since the table is not defined in the `api` schema, and since no PostgREST-facing role
 has permissions to read from it, it's a private table right now. The official PostgREST
-documentation recommends to only expose VIEWs and not tables. This makes it easier to
+documentation recommends to only expose VIEWs and not TABLEs. This makes it easier to
 change these views if the need arises, and creates a layer of abstraction between the
 API contract and the data structure.
 
@@ -161,12 +163,10 @@ CREATE VIEW api.portfolio_history AS (
         portfolio_history
 );
 
-GRANT
-SELECT
-    on api.portfolio_history to api_anon;
+GRANT SELECT on api.portfolio_history to api_anon;
 ```
 
-One note here. If you want the PostgREST server to pick-up on changes and clear it's
+One note here. If you want the PostgREST server to pick-up on changes and clear its
 cache, you can send a special notification:
 
 ```sql
@@ -244,10 +244,7 @@ CREATE VIEW api.latest_trades AS (
     LIMIT 100
 );
 
-GRANT
-SELECT
-    on api.latest_trades to api_anon;
-
+GRANT SELECT on api.latest_trades to api_anon;
 ```
 
 Try it: https://www.dataroc.ca/api/latest_trades. The redacted symbol is not much on its

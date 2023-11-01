@@ -1,8 +1,10 @@
 import './global.css'
 import type { Metadata } from 'next'
+import Head from 'next/head'
 import { Fragment_Mono } from 'next/font/google'
 import Sidebar from '../components/sidebar'
 import Topbar from '../components/topbar'
+import GoogleAnalytics from '../components/google-analytics'
 import { Analytics } from '@vercel/analytics/react'
 
 const textFont = Fragment_Mono({
@@ -62,6 +64,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${textFont.className}`}>
+      <Head>
+        <GoogleAnalytics />
+      </Head>
       <body className="prose-invert bg-blue antialiased max-w-4xl mb-40 flex flex-col md:flex-row mx-4 mt-16 md:mt-20 lg:mt-32 lg:mx-auto">
         <Topbar />
         <Sidebar />
