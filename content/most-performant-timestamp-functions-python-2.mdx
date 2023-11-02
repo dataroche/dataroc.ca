@@ -1,0 +1,223 @@
+---
+title: 'The most performant timestamp functions in Python: EXTENDED'
+publishedAt: '2023-11-01'
+summary: "Following the previous quick exploration and after much feedback, I'm extending the timestamp performance across Python versions and machine types."
+---
+
+Following my previous blog post [into the most performant timestamp functions in
+Python](/blog/most-performant-timestamp-functions-python), I generated quite the heated
+discussion in [this reddit
+post](https://www.reddit.com/r/Python/comments/17eryl6/til_that_datetimeutcnow_is_faster_than_datetimenow/).
+
+To summarize the discussion:
+
+- A handful of "Why are you micro-optimizing"?
+- The much-expected "if performance is so important to you, don't use Python"
+- There is an overhead to access the attributes of modules on each iteration (i.e. `datetime.datetime.now`)
+- A note that Python 3.12 deprecates `datetime.utcnow()` - I did not know that!
+- An interesting point related to Windows versus Linux machines
+
+Discarding the first 2 points, I decided to expand the initial analysis to compare
+Python 3.10 and 3.12. Moreover, I was curious to compare the performance of native Windows
+against WSL2. I've also included the test on an old Ubuntu server I have around here.
+
+Regarding the third point, I'm now accessing the attribute in the setup function
+(`fn=datetime.datetime.now`) and calling the resolved function in the loop.
+
+Because of the deprecation of utcnow, I removed it from the test cases.
+
+<SubscribeCTA />
+
+## Functions tested
+
+```python
+import time
+time.time()
+```
+
+```python
+import datetime
+datetime.datetime.now()
+```
+
+```python
+import datetime
+datetime.datetime.now().timestamp()
+```
+
+```python
+# This is the recommended replacement for `datetime.datetime.utcnow()`
+
+import datetime
+import pytz
+
+datetime.datetime.now(pytz.UTC)
+```
+
+```python
+import datetime
+import pytz
+
+a_timezone = pytz.timezone('America/Los_Angeles')
+datetime.datetime.now(a_timezone)
+```
+
+## Hardware tested
+
+- A native Ubuntu 20 server. This is running older hardware, and is expectedly slower.
+- A native Windows 10 laptop.
+- A WSL2 Ubuntu 20 machine running on the same Windows 10 laptop.
+
+Because Windows 10 and WSL2 are running the same hardware, we can directly compare the 2.
+
+## Results
+
+<StaticPlotlyChart filepath="timestamp-functions-2/time_per_machine.json">
+  Figure 1: The average time required for 1,000,000 calls of the respective
+  function. Color by hardware. Mean of Python 3.10 and 3.12. Lower is better.
+</StaticPlotlyChart>
+
+<StaticPlotlyChart filepath="timestamp-functions-2/time_per_python.json">
+  Figure 2: The average time required for 1,000,000 calls of the respective
+  function. Color by Python version. Mean of the 3 hardware machines. Lower is
+  better.
+</StaticPlotlyChart>
+
+## Conclusion
+
+- WSL2 is faster than native Windows (on the same physical machine) for all test cases
+  except `time.time()`, where it is slightly slower.
+- There is no solution as fast as the deprecated `datetime.utcnow()` to generate the
+  current timestamp as a datetime object. This was noted by the Cython team:
+  [https://github.com/python/cpython/issues/103857](https://github.com/python/cpython/issues/103857)
+- Python 3.12 is slightly faster across the board than 3.10.
+
+## Code
+
+### On each hardware/interpreter
+
+```python
+
+results = {}
+
+import timeit
+import sys
+
+results["time.time()"] = timeit.timeit(setup="import time; fn=time.time", stmt="fn()")
+results["datetime.now().timestamp()"] = timeit.timeit(
+    setup="import datetime; fn=datetime.datetime.now", stmt="fn().timestamp()"
+)
+results["datetime.now()"] = timeit.timeit(
+    setup="import datetime; fn=datetime.datetime.now", stmt="fn()"
+)
+
+results["datetime.now(timezone.UTC)"] = timeit.timeit(
+    setup="import datetime, pytz; fn=datetime.datetime.now", stmt="fn(pytz.UTC)"
+)
+results["datetime.now(tz)"] = timeit.timeit(
+    setup="import datetime, pytz; a_timezone = pytz.timezone('America/Los_Angeles'); fn=datetime.datetime.now",
+    stmt="fn(a_timezone)",
+)
+
+import time
+
+print(f"{time.time()} -vs- {time.perf_counter()}")
+
+results_sorted = sorted(results.items(), key=lambda t: t[1])
+
+for name, result_s in results_sorted:
+    print(f"{name},{result_s}")
+
+
+```
+
+### To compile the results
+
+```python
+
+# %%
+
+import pandas as pd
+
+data = pd.read_csv("analysis_time_2_data.csv")
+
+# %%
+
+ubuntu_20 = data[data["machine"] == "Ubuntu 20"]
+wsl2 = data[data["machine"] == "WSL2"]
+windows_10 = data[data["machine"] == "Windows 10"]
+
+# %%
+
+# Compare each, py3.10 vs 3.12
+
+import plotly.express as px
+
+px.bar(
+    ubuntu_20,
+    x="fn",
+    y="time_s",
+    color="python",
+    log_y=True,
+    barmode="group",
+    title="Ubuntu 20 native",
+)
+# %%
+
+px.bar(
+    wsl2,
+    x="fn",
+    y="time_s",
+    color="python",
+    log_y=True,
+    barmode="group",
+    title="WSL2",
+)
+# %%
+
+px.bar(
+    windows_10,
+    x="fn",
+    y="time_s",
+    color="python",
+    log_y=True,
+    barmode="group",
+    title="Windows 10",
+)
+# %%
+
+data_by_fn_arch = data[["fn", "time_s", "machine"]].groupby(["machine", "fn"]).mean()
+data_by_fn_arch = data_by_fn_arch.sort_index().reset_index()
+data_by_fn_arch.sort_values(["time_s"], inplace=True)
+
+fig_1 = px.line(
+    data_by_fn_arch,
+    x="fn",
+    y="time_s",
+    color="machine",
+    log_y=True,
+    title="Mean time per machine type for 100000 calls",
+)
+
+# %%
+
+data_by_fn_python = data[["fn", "time_s", "python"]].groupby(["python", "fn"]).mean()
+data_by_fn_python = data_by_fn_python.sort_index().reset_index()
+data_by_fn_python.sort_values(["time_s"], inplace=True)
+
+fig_2 = px.line(
+    data_by_fn_python,
+    x="fn",
+    y="time_s",
+    color="python",
+    log_y=True,
+    title="Mean time per Python version for 100000 calls",
+)
+# %%
+
+import plotly.io
+
+plotly.io.write_json(fig_1, 'time_per_machine.json')
+plotly.io.write_json(fig_2, 'time_per_python.json')
+
+```
