@@ -13,12 +13,12 @@ const textFont = Fragment_Mono({
 
 const siteName = 'Dataroc | Data-focused software developer and architect'
 const description =
-  'Data-focused software developer and architect. Lying in-between a software developer and a data scientist with all the skills to architect, implement, deploy and maintain data-focused applications.'
+  'Lying in-between a software developer and a data scientist with all the skills to architect, implement, deploy and maintain data-focused applications.'
 
 export const metadata: Metadata = {
   title: {
     default: siteName,
-    template: '%s | Dataroc',
+    template: '%s - Dataroc',
   },
   description,
   openGraph: {
