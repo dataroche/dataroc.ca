@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { LayoutGroup, motion } from 'framer-motion'
 
-import solenoid from '../public/SOLeNOID_small.png'
+import solenoid from '../public/SOLeNOID_small_shadow.png'
 
 const navItems = {
   '/': {
@@ -28,11 +28,9 @@ function Logo() {
     <Link aria-label="Dataroc" href="/">
       <Image
         src={solenoid}
-        alt="Dataroc SOLeNOID"
-        width={64}
-        height={64}
-        quality={95}
-        style={{ borderRadius: '20%' }}
+        alt="Dataroc SOLeNOID with shadow"
+        width={90}
+        height={90}
       />
     </Link>
   )
@@ -52,7 +50,7 @@ export default function Navbar() {
             className="flex flex-row md:flex-col items-center md:items-start relative px-4 md:px-0 pb-0 fade md:overflow-auto scroll-pr-6 md:relative flex-wrap gap-4"
             id="nav"
           >
-            <div className="mb-2 md:px-0 md:mb-8 space-y-2 flex flex-col md:flex-row items-start ">
+            <div className="mb-2 md:px-0 space-y-2 flex flex-col md:flex-row items-start ">
               <Logo />
             </div>
             <div className="flex flex-row md:flex-col space-x-0 mb-2 mt-2 md:mt-0">

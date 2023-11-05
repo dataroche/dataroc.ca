@@ -23,12 +23,14 @@ export default async function HomePage() {
       </PageTitle>
       <div className="prose prose-neutral dark:prose-invert">
         <p className="mb-3">
-          Software developer and architect specialized in data-focused
-          applications and infrastructure. Ready for my next challenge!
+          Software developer, manager-of-one available for short and medium-term
+          contract work. My specialty: scaling exponential growth startups on
+          Google Cloud Platform.
         </p>
         <p className="mb-5">
-          As a side-project for the past 2 years, I've been automating market
-          making strategies on crypto exchanges.{' '}
+          This website acts as my personal sandbox and portfolio. As a
+          side-project for the past 2 years, I've been automating market making
+          strategies on crypto exchanges.{' '}
         </p>
         <InlineCTAWithArrow arrowText="My market making portfolio">
           <PortfolioSummaryLink portfolioSummary={portfolioSummary} />
@@ -69,7 +71,7 @@ export default async function HomePage() {
           </a>
           . It's also the basis of this website's color palette.
         </p>
-        <hr className="mt-10" />
+        <div className="divider mt-10" />
         <ContactParagraph />
         <p className="text-sm mt-4">
           <a

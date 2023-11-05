@@ -77,7 +77,7 @@ export default async function Blog({ params }) {
         <div className="bg-neutral-100 rounded-md px-2 py-1 tracking-tighter">
           {post.publishedAt}
         </div>
-        <div className="h-[1px] bg-neutral-50 mx-2" />
+        <div className="divider ml-2" />
       </div>
       <Mdx code={post.body.code} />
       <SubscribeCTA />

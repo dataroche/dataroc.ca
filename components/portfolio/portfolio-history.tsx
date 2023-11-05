@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { ResponsiveLine } from '@nivo/line'
+import { ResponsiveLine, Serie } from '@nivo/line'
 
 import { usePortfolioHistory, PortfolioHistory } from 'lib/api/portfolioHistory'
 
@@ -33,6 +33,8 @@ type Marker = {
 type Props = {
   notes: Marker[]
 }
+
+const BENCHMARK_ALPHA = 'cc'
 
 export default function PortfolioHistory({ notes = [] }: Props) {
   const portfolioHistory = usePortfolioHistory()
@@ -71,6 +73,17 @@ export default function PortfolioHistory({ notes = [] }: Props) {
   // const Chart = () => {
   //   return
   // }
+
+  const colors = {
+    'Portfolio Value': '#ff9d00',
+    'BTC Benchmark': `#86a674`,
+    'ETH Benchmark': `#a1789e`,
+  }
+
+  const getColor = (line: Serie) => {
+    const { id } = line
+    return colors[id] || 'gray'
+  }
 
   return (
     <ResponsiveLine
@@ -114,7 +127,8 @@ export default function PortfolioHistory({ notes = [] }: Props) {
       }}
       useMesh={true}
       enableSlices="x"
-      colors={{ scheme: 'category10' }}
+      // colors={{ scheme: 'category10' }}
+      colors={getColor}
       sliceTooltip={tooltipFormatter}
       markers={notes.map((note) => ({
         axis: 'x',
