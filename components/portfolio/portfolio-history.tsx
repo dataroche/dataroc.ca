@@ -34,8 +34,6 @@ type Props = {
   notes: Marker[]
 }
 
-const BENCHMARK_ALPHA = 'cc'
-
 export default function PortfolioHistory({ notes = [] }: Props) {
   const portfolioHistory = usePortfolioHistory()
 
