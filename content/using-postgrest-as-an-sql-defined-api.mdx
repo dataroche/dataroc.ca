@@ -16,9 +16,10 @@ documentation, JWT authentication and your SQL schema completely defines the per
 and views of your REST API. You define views in your PostgreSQL database, point the
 PostgREST server to it and BAM. High performance REST API.
 
-All the [dynamic content from my live portfolio](/crypto-bots) is served off a
-PostgREST API. This post aims to summarize the different views currently exposed by the
-API and how the schema defines those views. In a future post, I will highlight how the
+All the [dynamic content from my live portfolio](/crypto-bots) is served off a PostgREST
+API. This post aims to summarize the different views currently exposed by the API and
+how the schema defines those views. [In the next post of this
+serie](/blog/inserting-data-via-the-postgrest-api-using-python), I highlight how the
 portfolio data gets inserted in the database using the UPDATE endpoints that PostgREST
 has to offer.
 
@@ -310,3 +311,8 @@ Try it out: https://www.dataroc.ca/api/portfolio_summary
 PostgREST is a simple and effective way to build an SQL-defined API on top of your
 PostgreSQL database. The performance is great and the memory footprint minimal. You can
 read more about users of the project here: https://postgrest.org/en/stable/#testimonials
+
+[In the next post of this
+serie](/blog/inserting-data-via-the-postgrest-api-using-python), I highlight how the
+portfolio data gets inserted in the database using the UPDATE endpoints that PostgREST
+has to offer.

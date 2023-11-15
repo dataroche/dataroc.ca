@@ -39,21 +39,22 @@ export default async function CryptoBotsPage() {
       </PageTitle>
       <div className="prose prose-neutral dark:prose-invert">
         <p className="mb-5">
-          This is an overview of a multi-strategy automated bot trading on
-          Kraken. In the last 30 days, the bot made a total of{' '}
+          Here's a summary of a multi-strategy automated bot engaged in trading
+          on Kraken. Over the past 30 days, the bot executed a total of{' '}
           <span className="text-sky">
             {portfolioSummary.tradesCount30d} trades
-          </span>{' '}
-          totalizing <span className="text-sky">USD {formattedUsdVolume}</span>{' '}
-          in volume.
+          </span>
+          , accumulating a trading volume of{' '}
+          <span className="text-sky">USD {formattedUsdVolume}</span>.
         </p>
         <p className="mb-5">
-          At the moment, the portfolio is composed of{' '}
+          Currently, the portfolio consists of{' '}
           <span className="text-sky">
-            {marketExposurePct.toFixed(1)}% crypto
+            {marketExposurePct.toFixed(1)}% in cryptocurrencies
           </span>
-          , while the rest is held in USD. Its objective: capturing 80% of the
-          broad crypto market upside while capping downside exposure to 50%.
+          , with the remaining portion held in USD. The primary goal is to
+          capture 80% of the overall crypto market's upward movements while
+          limiting downside exposure to 50%.
         </p>
         <h2 className="my-5">Weekly performance history</h2>
         {/* For some reason using the tailwind CSS does 
@@ -78,10 +79,13 @@ export default async function CryptoBotsPage() {
             </p>
           ))}
         </div>
-        <h2 className="my-5">Want to learn how this page works?</h2>
+        <h2 className="my-5">
+          Interested in understanding the mechanics behind this page?
+        </h2>
         <p className="mb-5">
-          This page is the end product of multiple pieces of code working
-          together! I have some posts that explains how this page works:
+          The content you see here is the result of several pieces of code
+          collaborating seamlessly. Check out my posts that delve into the
+          intricacies of how this page operates.
           <ul>
             <li>
               <a href="/blog/introducing-bots-perf">
@@ -91,6 +95,11 @@ export default async function CryptoBotsPage() {
             <li>
               <a href="/blog/using-postgrest-as-an-sql-defined-api">
                 Using PostgREST as an SQL-defined API
+              </a>
+            </li>
+            <li>
+              <a href="/blog/inserting-data-via-the-postgrest-api-using-python">
+                Inserting data via the PostgREST API using Python
               </a>
             </li>
           </ul>

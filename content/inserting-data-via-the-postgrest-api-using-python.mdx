@@ -1,0 +1,258 @@
+---
+title: 'Inserting data via the PostgREST API using Python'
+publishedAt: '2023-11-15'
+summary: 'Master secure data insertion into your PostgREST API with Python, continuing our PostgREST series.'
+---
+
+Building upon our previous [dive into PostgREST's read
+capabilities](/blog/using-postgrest-as-an-sql-defined-api), this post unveils the
+secrets of securely writing data via the PostgREST API.
+
+With PostgREST, harness the power of standardized SQL definitions and explore strategies
+for robust API access control. Dive into the simplicity of shared secret keys and JWT
+tokens, the very tools fueling updates in [my dynamic portfolio page](/crypto-bots).
+
+<SubscribeCTA />
+
+# The data tables: a refresher
+
+
+As outlined in the preceding blog post, my live portfolio incorporates SQL views exposed
+as REST endpoints. The functionality of these endpoints relies on the existence of two
+source tables: trades and portfolio_history.
+
+Let's delve into their respective schemas:
+
+```sql
+
+CREATE TYPE market_enum as enum('kraken');
+
+CREATE TYPE interval_enum as enum('week', 'day');
+
+CREATE TABLE portfolio_history (
+    id SERIAL NOT NULL,
+    timestamp BIGINT NOT NULL,
+    updated_at BIGINT,
+    market market_enum,
+    interval interval_enum,
+    usd_total_value NUMERIC(48, 18),
+    usd_held NUMERIC(48, 18),
+    interval_pct_return NUMERIC(48, 18),
+    benchmark_btc_value NUMERIC(48, 18),
+    benchmark_btc_interval_pct_return NUMERIC(48, 18),
+    benchmark_eth_value NUMERIC(48, 18),
+    benchmark_eth_interval_pct_return NUMERIC(48, 18),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE trades (
+    id TEXT NOT NULL,
+    timestamp BIGINT NOT NULL,
+    market market_enum NOT NULL,
+    symbol TEXT NOT NULL,
+    base_asset TEXT NOT NULL,
+    quote_asset TEXT NOT NULL,
+    is_buy BOOL NOT NULL,
+    amount NUMERIC(48, 18) NOT NULL,
+    price NUMERIC(48, 18) NOT NULL,
+    usd_value NUMERIC(48, 18) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+```
+
+
+Certainly, for data to be returned by REST endpoints like
+https://www.dataroc.ca/api/latest_trades, it must first exist in the database. Let's
+explore how my local scripts leverage PostgREST UPDATE endpoints to insert new data and
+update existing records.
+
+# Scaffolding PostgREST permissions
+
+The write endpoints feature JWT token authentication for protection. In our previous
+post, we operated the PostgREST server with a SECRET_KEY environment variable. This
+represents the simpler of the two security schemes offered by PostgREST, where the JWT
+token is symmetrically encrypted and decrypted using the same key ([learn more](https://postgrest.org/en/stable/references/auth.html#symmetric-keys)).
+
+<Callout emoji="👉">
+For scenarios where authentication is tied to individual users, it is advisable to opt
+for the asymmetric key scheme with an external OAuth provider, like Google.
+</Callout>
+
+We establish a distinct role, `api_data_producer`, endowed with more permissions than
+the default `api_anon` role. The name of this role is not significant; it will be
+encrypted in the JWT token.
+
+```sql
+CREATE ROLE api_data_producer nologin;
+GRANT api_data_producer TO authenticator;
+```
+
+Just like for the `api_anon` role, the `authenticator` role requires permission to
+impersonate it. We shall remember that the authenticator role is the special
+initialization role that PostgREST uses to then use other roles based on the auth token
+provided.
+
+# Update endpoints
+
+## Trades endpoint
+
+To create a writeable endpoint, the only thing needed is to grant appropriate
+permissions to the desired role. As for public views, PostgREST recommends writing to
+views and not to tables. And yes, you can insert data into a view as long as [it
+satisfies certain
+conditions](https://www.postgresql.org/docs/current/sql-createview.html#SQL-CREATEVIEW-UPDATABLE-VIEWS).
+
+```sql
+-- Restricted access to api_data_producer
+CREATE VIEW api.all_trades AS (
+    SELECT
+        *
+    FROM
+        trades
+);
+
+GRANT USAGE on SCHEMA api to api_data_producer;
+GRANT SELECT, INSERT, UPDATE ON api.all_trades to api_data_producer;
+```
+
+## Portfolio history
+
+Nothing much different for the portfolio history view, except that we decided to support
+deletion. The update script deletes the last incomplete entry (the ongoing week, for
+example) and creates a new one every time. 
+
+```sql
+
+CREATE VIEW api.portfolio_history AS (
+    SELECT
+        id,
+        timestamp,
+        timestamp / 1000 as timestamp_s,
+        market,
+        interval,
+        usd_total_value,
+        usd_held,
+        interval_pct_return,
+        benchmark_btc_value,
+        benchmark_btc_interval_pct_return,
+        benchmark_eth_value,
+        benchmark_eth_interval_pct_return
+    FROM
+        portfolio_history
+);
+
+
+GRANT USAGE, SELECT ON SEQUENCE portfolio_history_id_seq TO api_data_producer;
+GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON api.portfolio_history to api_data_producer;
+```
+
+I'm not exactly sure anymore if the GRANT on the `portfolio_history_id_seq` is
+necessary. Let me know if you try it out!
+
+# The main show: adding data securely
+
+Now that we have writable REST endpoints, securely invoking them is the next step. The
+Python implementation provided here is language-agnostic in its approach.
+
+## Generating the JWT token
+
+PostgREST utilizes the standard `Authorization: 'Bearer ...'` header for authorization.
+Here's how to generate the token in Python using symmetrical encryption:
+
+```python
+import jwt
+
+def generate_jwt(target_url: str, role: str, jwt_secret: Optional[str] = None):
+    if jwt_secret is None:
+        jwt_secret = os.environ["PGRST_JWT_SECRET"]
+    return jwt.encode({"role": role, "aud": target_url}, jwt_secret, algorithm="HS256")
+
+```
+
+As an example, using this website and the `api_data_producer` role:
+
+```python
+auth_header = f'Bearer {generate_jwt(target_url, role)}'
+```
+
+## Adding trades
+
+Once we have a JWT token, we can now POST data to our REST API. Utilizing the
+[postgrest-py](https://github.com/supabase-community/postgrest-py) library, Python makes
+this task seamless:
+
+```python
+import datetime
+import jwt
+import postgrest
+
+def generate_jwt(target_url: str, role: str, jwt_secret: Optional[str] = None):
+    if jwt_secret is None:
+        jwt_secret = os.environ["PGRST_JWT_SECRET"]
+    return jwt.encode({"role": role, "aud": target_url}, jwt_secret, algorithm="HS256")
+
+def datetime_to_ms(dt: Optional[datetime.datetime] = None):
+    if not dt:
+        dt = datetime.datetime.utcnow()
+
+    return int((dt - datetime.datetime(1970, 1, 1)).total_seconds() * 1e3)
+
+target_url = 'https://dataroc-api.fly.dev/'
+role = 'api_data_producer'
+jwt_secret = '...'
+
+headers = {
+    "Authorization": f"Bearer {generate_jwt(target_url, role, jwt_secret=jwt_secret)}"
+}
+client = postgrest.SyncPostgrestClient(
+    target_url, schema="api", headers=headers, timeout=60
+)
+
+my_trade = {
+    "id": "unique-order-id",
+    "timestamp": datetime_to_ms(),
+    "market": "kraken",
+    "symbol": "ETH/USD",
+    "base_asset": "ETH",
+    "quote_asset": "USD",
+    "is_buy": True,
+    "amount": 1.0,
+    "price": 2013.20,
+    "usd_value": 2013.20,
+}
+
+client.from_table("all_trades").insert(
+    [my_trade], upsert=True
+).execute()
+
+```
+
+This Python script effectively inserts the specified trade into the remote database.
+Note that the `id` column can be any string, and with the `upsert=True` option, existing
+orders are replaced.
+
+I utilize the Hummingbot order ID. If the order already exists, it will be seamlessly
+replaced. This feature enables my script to eagerly re-insert existing trades,
+eliminating concerns about duplicates.
+
+# Conclusion
+
+In conclusion, this tutorial has equipped you with the technical prowess to establish a
+robust writable API for your PostgreSQL database, seamlessly integrating Python and
+PostgREST. From configuring your schema for write-able views to crafting JWT tokens with
+appropriate permissions, and finally, executing data insertions to the all_trades
+endpoint.
+
+While we intentionally omitted the Python code to write to the portfolio_history
+endpoint for brevity, the same insertion principles we showed related to all_trades can
+be extended to that view as well.
+
+Such a REST API opens the gateway to constructing publicly accessible, yet highly
+secure, writable endpoints. Consider the diverse applications: IoT data ingestion, or
+dynamic portfolio content updates, exemplified by [my dynamic portfolio](/crypto-bots).
+
+This tutorial marks the commencement of an exploration into the extensive possibilities
+that lie ahead in your SQL and Python journey. Happy coding!
+
+
