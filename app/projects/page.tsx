@@ -7,7 +7,8 @@ import { getPortfolioSummaryServerSide } from 'lib/api/portfolioSummary'
 
 export const metadata: Metadata = {
   title: 'Projects',
-  description: "Some projects I've worked on/I'm working on",
+  description:
+    'Elevate your skills with insights on SQL, Python, data engineering, and algo trading. Tailored for both experienced and aspiring developers.',
 }
 
 export default async function UsesPage() {

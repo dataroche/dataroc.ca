@@ -6,7 +6,8 @@ import PageTitle from 'components/page-title'
 
 export const metadata: Metadata = {
   title: 'Blog',
-  description: 'Read my thoughts on software development, design, and more.',
+  description:
+    'Elevate your skills with blog posts on SQL, Python, data engineering, and algo trading. Tailored for both experienced and aspiring developers.',
 }
 
 export default async function BlogPage() {
