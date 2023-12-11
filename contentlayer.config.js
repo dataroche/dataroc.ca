@@ -60,6 +60,10 @@ export const Blog = defineDocumentType(() => ({
     image: {
       type: 'string',
     },
+    tags: {
+      type: 'list',
+      of: { type: 'string' },
+    },
   },
   computedFields,
 }));

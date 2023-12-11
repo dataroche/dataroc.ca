@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { allBlogs } from 'contentlayer/generated'
+import { TagChip } from 'components/tags'
 
 import PageTitle from 'components/page-title'
 
@@ -21,20 +22,26 @@ export default async function BlogPage() {
           }
           return 1
         })
-        .map((post) => (
-          <Link
-            key={post.slug}
-            className="flex flex-col space-y-1 mb-4 "
-            href={`/blog/${post.slug}`}
-          >
-            <div className="w-full flex flex-col">
-              <p>
-                <span className="text-sky">{post.title}</span>
-              </p>
-              <p className="italic">Posted on {post.publishedAt}</p>
-            </div>
-          </Link>
-        ))}
+        .map((post) => {
+          return (
+            <Link
+              key={post.slug}
+              className="flex flex-col space-y-1 mb-6 "
+              href={`/blog/${post.slug}`}
+            >
+              <div className="w-full flex flex-col gap-1">
+                <p>
+                  <span className="text-sky">{post.title}</span>
+                </p>
+                <p>
+                  <span className="italic pr-2">{post.publishedAt}</span>
+                  {post.tags &&
+                    post.tags.map((tag) => <TagChip key={tag} tagKey={tag} />)}
+                </p>
+              </div>
+            </Link>
+          )
+        })}
     </section>
   )
 }
