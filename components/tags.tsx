@@ -1,26 +1,35 @@
 import { allBlogs, Blog } from 'contentlayer/generated'
 import Link from 'next/link'
 
+const PROJECT_PALETTE = ['#a4b6dd', '#d09292', '#c094cc', '#a2d0c0', '#c37892']
+
+const TECH_PALETTE = ['#2d5b6b', '#c47a53', '#8f4731', '#52494c', '#7b7d2a']
+
 export const TAGS = [
   {
     key: 'crypto-bots',
     label: 'Project: Crypto bots',
-    color: '#CC6600',
+    color: PROJECT_PALETTE[0],
   },
   {
     key: 'dataroc.ca',
     label: 'Project: dataroc.ca',
-    color: '#666666',
+    color: PROJECT_PALETTE[1],
+  },
+  {
+    key: 'wishroll',
+    label: 'Project: WishRoll',
+    color: PROJECT_PALETTE[2],
   },
   {
     key: 'python',
     label: 'Python',
-    color: '#6666FF',
+    color: TECH_PALETTE[0],
   },
   {
     key: 'sql',
     label: 'SQL',
-    color: '#669966',
+    color: TECH_PALETTE[1],
   },
 ]
 
