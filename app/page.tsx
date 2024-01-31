@@ -1,6 +1,6 @@
 import PageTitle from 'components/page-title'
 import { ContactParagraph, LinkedInLink } from 'components/contact'
-import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link'
+// import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link'
 import { getPortfolioSummaryServerSide } from 'lib/api/portfolioSummary'
 import InlineCTAWithArrow from 'components/inline-cta-with-arrow'
 
@@ -32,7 +32,7 @@ export default async function HomePage() {
           side-project for the past 2 years, I've been automating market making
           strategies on crypto exchanges.{' '}
         </p>
-        <InlineCTAWithArrow arrowText="My market making portfolio">
+        {/* <InlineCTAWithArrow arrowText="My market making portfolio">
           <PortfolioSummaryLink portfolioSummary={portfolioSummary} />
         </InlineCTAWithArrow>
         <p className="my-5">
@@ -42,7 +42,7 @@ export default async function HomePage() {
           </a>{' '}
           explores the latency of different crypto exchanges and the
           relationship between the real-time prices of certain symbols.
-        </p>
+        </p> */}
         <h2 className="my-5" id="why-dataroc">
           About me
         </h2>

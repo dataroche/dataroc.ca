@@ -1,14 +1,22 @@
-# fly.toml app configuration file generated for dataroc-api on 2023-06-21T19:15:56-04:00
+# fly.toml app configuration file generated for dataroc-api on 2024-01-31T15:12:21-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "dataroc-api"
-primary_region = "yul"
+app = 'dataroc-api'
+primary_region = 'yul'
+
+[build]
 
 [http_service]
-  internal_port = 5001
+  internal_port = 3000
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
   min_machines_running = 1
+  max_machines_running = 1
+
+[[vm]]
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 256
