@@ -1,13 +1,13 @@
 import PageTitle from 'components/page-title'
 import { ContactParagraph, LinkedInLink } from 'components/contact'
 // import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link'
-import { getPortfolioSummaryServerSide } from 'lib/api/portfolioSummary'
-import InlineCTAWithArrow from 'components/inline-cta-with-arrow'
+// import { getPortfolioSummaryServerSide } from 'lib/api/portfolioSummary'
+// import InlineCTAWithArrow from 'components/inline-cta-with-arrow'
 
 export const revalidate = 60
 
 export default async function HomePage() {
-  const portfolioSummary = await getPortfolioSummaryServerSide()
+  // const portfolioSummary = await getPortfolioSummaryServerSide()
 
   return (
     <section>

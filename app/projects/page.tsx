@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { ContactParagraph } from 'components/contact'
 import PageTitle from 'components/page-title'
 // import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link'
-import { getPortfolioSummaryServerSide } from 'lib/api/portfolioSummary'
+// import { getPortfolioSummaryServerSide } from 'lib/api/portfolioSummary'
 
 export const metadata: Metadata = {
   title: 'Projects',
