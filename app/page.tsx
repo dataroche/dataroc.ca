@@ -1,14 +1,9 @@
 import PageTitle from 'components/page-title'
 import { ContactParagraph, LinkedInLink } from 'components/contact'
-// import PortfolioSummaryLink from 'components/portfolio/portfolio-summary-link'
-// import { getPortfolioSummaryServerSide } from 'lib/api/portfolioSummary'
-// import InlineCTAWithArrow from 'components/inline-cta-with-arrow'
 
 export const revalidate = 60
 
 export default async function HomePage() {
-  // const portfolioSummary = await getPortfolioSummaryServerSide()
-
   return (
     <section>
       <PageTitle
@@ -28,21 +23,10 @@ export default async function HomePage() {
           Google Cloud Platform.
         </p>
         <p className="mb-5">
-          This website acts as my personal sandbox and portfolio. As a
-          side-project for the past 2 years, I've been automating market making
-          strategies on crypto exchanges.{' '}
+          This website acts as my personal sandbox. As a side-project for the
+          past 2 years, I've been automating market making strategies on crypto
+          exchanges.{' '}
         </p>
-        {/* <InlineCTAWithArrow arrowText="My market making portfolio">
-          <PortfolioSummaryLink portfolioSummary={portfolioSummary} />
-        </InlineCTAWithArrow>
-        <p className="my-5">
-          I love to compile and analyze crypto markets data. My{' '}
-          <a href="/blog/how-crypto-exchanges-perform-under-load">
-            latest blog
-          </a>{' '}
-          explores the latency of different crypto exchanges and the
-          relationship between the real-time prices of certain symbols.
-        </p> */}
         <h2 className="my-5" id="why-dataroc">
           About me
         </h2>
