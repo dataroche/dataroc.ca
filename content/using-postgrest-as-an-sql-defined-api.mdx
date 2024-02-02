@@ -19,8 +19,7 @@ documentation, JWT authentication and your SQL schema completely defines the per
 and views of your REST API. You define views in your PostgreSQL database, point the
 PostgREST server to it and BAM. High performance REST API.
 
-All the [dynamic content from my live portfolio](/crypto-bots) is served off a PostgREST
-API. This post aims to summarize the different views currently exposed by the API and
+This post aims to summarize the different views currently exposed by the API and
 how the schema defines those views. [In the next post of this
 serie](/blog/inserting-data-via-the-postgrest-api-using-python), I highlight how the
 portfolio data gets inserted in the database using the UPDATE endpoints that PostgREST
@@ -181,7 +180,7 @@ NOTIFY pgrst, 'reload schema';
 I append this notification at the end of all my migration scripts.
 
 Then, you have a live portfolio_history endpoint:
-https://www.dataroc.ca/api/portfolio_history?order=timestamp_s.asc
+`/api/portfolio_history?order=timestamp_s.asc`
 
 ## Summarized stats
 
@@ -251,9 +250,9 @@ CREATE VIEW api.latest_trades AS (
 GRANT SELECT on api.latest_trades to api_anon;
 ```
 
-Try it: https://www.dataroc.ca/api/latest_trades. The redacted symbol is not much on its
-own, since you can reasonably guess the pair using the price and timestamp. That's a
-challenge to you the reader: decode one of the redacted pairs I'm trading on!
+The redacted symbol is not much on its own, since you can reasonably guess the pair
+using the price and timestamp. That's a challenge to you the reader: decode one of the
+redacted pairs I'm trading on!
 
 And then I create the stats endpoint:
 

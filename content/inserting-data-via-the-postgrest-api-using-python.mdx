@@ -13,8 +13,7 @@ capabilities](/blog/using-postgrest-as-an-sql-defined-api), this post unveils th
 secrets of securely writing data via the PostgREST API.
 
 With PostgREST, harness the power of standardized SQL definitions and explore strategies
-for robust API access control. Dive into the simplicity of shared secret keys and JWT
-tokens, the very tools fueling updates in [my dynamic portfolio page](/crypto-bots).
+for robust API access control.
 
 <SubscribeCTA />
 
@@ -67,7 +66,7 @@ CREATE TABLE trades (
 
 
 Certainly, for data to be returned by REST endpoints like
-https://www.dataroc.ca/api/latest_trades, it must first exist in the database. Let's
+`/api/latest_trades`, it must first exist in the database. Let's
 explore how my local scripts leverage PostgREST UPDATE endpoints to insert new data and
 update existing records.
 
@@ -253,10 +252,7 @@ endpoint for brevity, the same insertion principles we showed related to all_tra
 be extended to that view as well.
 
 Such a REST API opens the gateway to constructing publicly accessible, yet highly
-secure, writable endpoints. Consider the diverse applications: IoT data ingestion, or
-dynamic portfolio content updates, exemplified by [my dynamic portfolio](/crypto-bots).
-
-This tutorial marks the commencement of an exploration into the extensive possibilities
-that lie ahead in your SQL and Python journey. Happy coding!
+secure, writable endpoints. This tutorial marks the commencement of an exploration into
+the extensive possibilities that lie ahead in your SQL and Python journey. Happy coding!
 
 
