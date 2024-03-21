@@ -1,7 +1,7 @@
 ---
 title: 'Inserting data via the PostgREST API using Python'
 publishedAt: '2023-11-15'
-summary: 'Explore secure data writing with PostgREST API in this insightful post — essential tools powering updates on my dynamic portfolio page.'
+summary: 'Learn how to securely write data to your PostgREST API endpoint from a Python script — Whether you host your own PostgREST endpoint, or use a service like Supabase.'
 tags: 
   - 'dataroc.ca'
   - 'sql'
@@ -12,8 +12,9 @@ Building upon our previous [dive into PostgREST's read
 capabilities](/blog/using-postgrest-as-an-sql-defined-api), this post unveils the
 secrets of securely writing data via the PostgREST API.
 
-With PostgREST, harness the power of standardized SQL definitions and explore strategies
-for robust API access control.
+PostgREST enables you to define secure API endpoints through SQL. Whether you have your
+own PostgREST API running, or would like to update your Supabase data from an external
+Python script, this post is for you!
 
 <SubscribeCTA />
 
@@ -65,7 +66,7 @@ CREATE TABLE trades (
 ```
 
 
-Certainly, for data to be returned by REST endpoints like
+For data to be returned by REST endpoints like
 `/api/latest_trades`, it must first exist in the database. Let's
 explore how my local scripts leverage PostgREST UPDATE endpoints to insert new data and
 update existing records.
@@ -83,8 +84,8 @@ for the asymmetric key scheme with an external OAuth provider, like Google.
 </Callout>
 
 We establish a distinct role, `api_data_producer`, endowed with more permissions than
-the default `api_anon` role. The name of this role is not significant; it will be
-encrypted in the JWT token.
+the default `api_anon` role. The name of this role is not special; you simply need to
+use the same when generating your JWT token.
 
 ```sql
 CREATE ROLE api_data_producer nologin;
@@ -153,7 +154,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON api.portfolio_history to api_d
 I'm not exactly sure anymore if the GRANT on the `portfolio_history_id_seq` is
 necessary. Let me know if you try it out!
 
-# The main show: adding data securely
+# Adding data from an external Python script
 
 Now that we have writable REST endpoints, securely invoking them is the next step. The
 Python implementation provided here is language-agnostic in its approach.
