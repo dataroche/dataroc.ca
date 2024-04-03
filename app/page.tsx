@@ -34,8 +34,8 @@ export default async function HomePage() {
       <div className="prose prose-neutral dark:prose-invert">
         <p className="mb-3">
           Software developer, manager-of-one working as an independant
-          contractor with currently no availabilities. My specialty: scaling
-          exponential growth startups on Google Cloud Platform.
+          contractor without any availabilities at the moment. My specialty:
+          scaling exponential growth startups on Google Cloud Platform.
         </p>
         <p className="mb-5">
           This website acts as my personal sandbox. As a side-project for the
