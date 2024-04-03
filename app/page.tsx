@@ -3,13 +3,28 @@ import { ContactParagraph, LinkedInLink } from 'components/contact'
 
 export const revalidate = 60
 
+const wittySubtitleText = () => {
+  const now = new Date()
+  const hour = now.getHours()
+
+  if (hour < 7 || hour >= 22) {
+    return '💭 Dreaming of 20ms requests'
+  } else if (hour < 11) {
+    return '🍳 Cooking data for breakfast'
+  } else if (hour < 17) {
+    return '👨‍🔬 Solving constraints'
+  } else {
+    return '🌆 Puzzled by the sunset'
+  }
+}
+
 export default async function HomePage() {
   return (
     <section>
       <PageTitle
         subTitle={
-          <span className="flex flex-row md:gap-5 flex-wrap">
-            <p className="whitespace-nowrap mr-2">Open to work</p>
+          <span className="flex flex-row md:gap-5 flex-wrap gap-2">
+            <p className="whitespace-nowrap mr-2">{wittySubtitleText()}</p>
             <LinkedInLink text="connect on linked in" />
           </span>
         }
@@ -18,9 +33,9 @@ export default async function HomePage() {
       </PageTitle>
       <div className="prose prose-neutral dark:prose-invert">
         <p className="mb-3">
-          Software developer, manager-of-one available for short and medium-term
-          contract work. My specialty: scaling exponential growth startups on
-          Google Cloud Platform.
+          Software developer, manager-of-one working as an independant
+          contractor with currently no availabilities. My specialty: scaling
+          exponential growth startups on Google Cloud Platform.
         </p>
         <p className="mb-5">
           This website acts as my personal sandbox. As a side-project for the
