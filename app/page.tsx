@@ -1,22 +1,8 @@
 import PageTitle from 'components/page-title'
 import { ContactParagraph, LinkedInLink } from 'components/contact'
+import { WittySubtitleText } from 'components/locale-text'
 
 export const revalidate = 60
-
-const wittySubtitleText = () => {
-  const now = new Date()
-  const hour = now.getHours()
-
-  if (hour < 7 || hour >= 22) {
-    return '💭 Dreaming of 20ms requests'
-  } else if (hour < 11) {
-    return '🍳 Cooking data for breakfast'
-  } else if (hour < 17) {
-    return '👨‍🔬 Solving constraints'
-  } else {
-    return '🌆 Puzzled by the sunset'
-  }
-}
 
 export default async function HomePage() {
   return (
@@ -24,7 +10,9 @@ export default async function HomePage() {
       <PageTitle
         subTitle={
           <span className="flex flex-row md:gap-5 flex-wrap gap-2">
-            <p className="whitespace-nowrap mr-2">{wittySubtitleText()}</p>
+            <p className="whitespace-nowrap mr-2">
+              <WittySubtitleText />
+            </p>
             <LinkedInLink text="connect on linked in" />
           </span>
         }
