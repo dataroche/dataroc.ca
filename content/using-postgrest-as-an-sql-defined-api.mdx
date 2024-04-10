@@ -179,9 +179,6 @@ NOTIFY pgrst, 'reload schema';
 
 I append this notification at the end of all my migration scripts.
 
-Then, you have a live portfolio_history endpoint:
-`/api/portfolio_history?order=timestamp_s.asc`
-
 ## Summarized stats
 
 I recently added stats to the performance page. They are sprinkled throughout the text:
@@ -305,8 +302,6 @@ GRANT SELECT on api.portfolio_summary to api_anon;
 This gets the last portfolio_history entry which contains the portfolio value and the
 updated at timestamp. In addition, it computes the number of trades and the total value
 in USD of these trades based on the new trades table!
-
-Try it out: https://www.dataroc.ca/api/portfolio_summary
 
 # Conclusion
 
