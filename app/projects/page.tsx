@@ -21,7 +21,7 @@ const ProjectHeader = ({
   return (
     <div>
       <h2 className="mb-0">{children}</h2>
-      <p className="whitespace-nowrap mr-2">
+      <p className="mr-2">
         {projectNote} • {dateRange}
       </p>
     </div>
