@@ -28,6 +28,36 @@ const ProjectHeader = ({
   )
 }
 
+const ProjectUnravel = () => (
+  <div>
+    <ProjectHeader
+      dateRange="Dec 2023 to Mar 2024"
+      projectNote="Client: WishRoll Inc."
+    >
+      Unravel
+    </ProjectHeader>
+    <p>
+      Unravel was a mobile app designed as an extension to what Status AI
+      offered. We built Unravel to allow anyone to write AI-assisted roleplay
+      stories involving the user and multiple characters.
+    </p>
+    <p>
+      As I proved my worth to the team with the previous project, I took on the
+      lead of the backend development.
+    </p>
+    <ul>
+      <li>
+        Design and implementation of all API endpoints and all database models
+        with a scale-first approach.
+      </li>
+      <li>
+        Fully-functionning and deployed backend for the app's V1 within 1 month
+        of the initial idea.
+      </li>
+    </ul>
+  </div>
+)
+
 const ProjectStatusAI = () => (
   <div>
     <ProjectHeader
@@ -130,6 +160,7 @@ export default async function UsesPage() {
     <section>
       <PageTitle>projects</PageTitle>
       <div className="prose prose-neutral dark:prose-invert">
+        <ProjectUnravel />
         <ProjectStatusAI />
         <ProjectCryptoBots />
       </div>
