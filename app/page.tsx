@@ -45,7 +45,7 @@ export default async function HomePage() {
           past 2 years, I've been automating market making strategies on crypto
           exchanges.{' '}
         </p>
-        <h2 className="my-5" id="why-dataroc">
+        <h2 className="my-5" id="about-me">
           About me
         </h2>
         <p className="my-5">
@@ -54,7 +54,7 @@ export default async function HomePage() {
           travel, meet new people and experience extraordinary food. Latest
           travels: Denmark, the Canary Islands and London.
         </p>
-        <h2 className="my-5" id="why-dataroc">
+        <h2 className="my-5" id="testimonials">
           Testimonials
         </h2>
         <Quote source="Amit, Frontend Dev @ WishRoll Inc.">
@@ -76,7 +76,7 @@ export default async function HomePage() {
           Dataroc is a portmanteau of <span className="text-sky">data</span> and
           part of my last name, La<span className="text-sky">roc</span>he.
         </p>
-        <h2 className="my-5" id="why-dataroc">
+        <h2 className="my-5" id="why-favicon">
           What is that avatar/favicon?
         </h2>
         <p>
