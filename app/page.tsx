@@ -61,7 +61,11 @@ export default async function HomePage() {
           Thanks for all your help being on top of everything this week William,
           this is some of the most fun stress I've had in a while
         </Quote>
-        <Quote source="Vivien Sin, CEO @ The Third Place">
+        <Quote source="Fai, CEO @ WishRoll Inc.">
+          [...] you've helped us grow so much already and we couldn't do it
+          without you 😊
+        </Quote>
+        <Quote source="Vivien, CEO @ The Third Place">
           [William is an] Excellent project manager who is great at getting the
           team organized when it comes to sprint planning
         </Quote>
