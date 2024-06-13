@@ -13,8 +13,8 @@ const Quote = ({
 }) => {
   return (
     <div>
-      <q className="mt-5 italic">{children}</q>
-      <p className="mt-1 mb-5 text-right">{source}</p>
+      <q className="mt-5">{children}</q>
+      <p className="mt-1 mb-5 text-right italic">{source}</p>
     </div>
   )
 }
