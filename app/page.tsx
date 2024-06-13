@@ -4,6 +4,21 @@ import { WittySubtitleText } from 'components/locale-text'
 
 export const revalidate = 60
 
+const Quote = ({
+  source,
+  children,
+}: {
+  source: string
+  children: React.ReactNode
+}) => {
+  return (
+    <div>
+      <q className="mt-5 italic">{children}</q>
+      <p className="mt-1 mb-5 text-right">{source}</p>
+    </div>
+  )
+}
+
 export default async function HomePage() {
   return (
     <section>
@@ -39,6 +54,17 @@ export default async function HomePage() {
           travel, meet new people and experience extraordinary food. Latest
           travels: Denmark, the Canary Islands and London.
         </p>
+        <h2 className="my-5" id="why-dataroc">
+          Testimonials
+        </h2>
+        <Quote source="Amit, Frontend Dev @ WishRoll Inc.">
+          Thanks for all your help being on top of everything this week William,
+          this is some of the most fun stress I've had in a while
+        </Quote>
+        <Quote source="Vivien Sin, CEO @ The Third Place">
+          [William is an] Excellent project manager who is great at getting the
+          team organized when it comes to sprint planning
+        </Quote>
         <h2 className="my-5" id="why-dataroc">
           Why dataroc?
         </h2>
