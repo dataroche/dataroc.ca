@@ -31,6 +31,11 @@ export const TAGS = [
     label: 'SQL',
     color: TECH_PALETTE[1],
   },
+  {
+    key: 'gcp',
+    label: 'GCP',
+    color: TECH_PALETTE[2],
+  },
 ]
 
 export const TagChip = ({ tagKey }: { tagKey: string }) => {

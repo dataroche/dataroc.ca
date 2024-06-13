@@ -1,0 +1,188 @@
+---
+title: 'Terraform module to stream Pub/Sub JSON to Cloud SQL on GCP'
+publishedAt: '2024-06-15'
+summary: 'Introducing terraform-gcp-pubsub-dlt-stream, a terraform module to deploy an instance group to stream JSON events from Pub/Sub to Cloud SQL on GCP.'
+tags: 
+  - 'wishroll'
+  - 'gcp'
+---
+
+Recently, I was faced with the task of deploying a brand new backend for a mobile app
+we're developing at WishRoll. To simplify the maintenance of our infrastructure, I
+decided to migrate our previous backend deployment to infra-as-code using Terraform. The
+aim was to replicate the manually deployed backend of our previous app.
+
+Part of this old backend is an instance group that processes custom events as
+micro-batches and insert them in our PostgreSQL database. I had open-sourced the worker
+code and [explained how to use it in a previous blog
+post.](/blog/streaming-pubsub-json-to-cloud-sql-postgresql-on-gcp)
+
+Figuring out how to migrate the deployment to Terraform turned out to be quite an
+adventure, as running containers in a Compute VM is not a native solution. It requires
+the use of custom metadata and the errors are NOT verbose.
+
+# TL;DR
+
+You can use this terraform module
+[github.com/dataroche/terraform-gcp-pubsub-dlt-stream](https://github.com/dataroche/terraform-gcp-pubsub-dlt-stream)
+to stream JSON Pub/Sub messages straight into Cloud SQL on GCP!
+
+- The pubsub-dlt-stream image is now hosted on docker hub:
+  [https://hub.docker.com/r/dataroc/pubsub-dlt-stream](https://hub.docker.com/r/dataroc/pubsub-dlt-stream).
+- Minimum throughput capacity of 700 messages/s per worker.
+- Cost of $8.03/mth per active worker using n1-standard-1 spot machines.
+- Auto-scaled using production-tested settings with configurable min/max replicas.
+
+## Steps automated
+
+The manual steps that are automated in this Terraform module are the ones defined in the
+[pubsub-dlt-stream](https://github.com/dataroche/pubsub-dlt-stream) repo's README.
+
+As part of this project, I also deployed the pubsub-dlt-stream image on docker hub:
+[https://hub.docker.com/r/dataroc/pubsub-dlt-stream](https://hub.docker.com/r/dataroc/pubsub-dlt-stream)
+
+# Example usage
+
+Given these variables as input:
+
+```sh
+
+# ---------------------------------------------------------------------------------------------------------------------
+# REQUIRED PARAMETERS
+# These variables are expected to be passed in by the operator
+# ---------------------------------------------------------------------------------------------------------------------
+
+variable "google_region" {
+  description = "The region"
+  type        = string
+}
+
+variable "target_database_name" {
+  description = "The target database name"
+  type        = string
+}
+
+variable "target_database_private_ip" {
+  description = "The target database private ip"
+  type        = string
+}
+
+variable "target_database_default_database_name" {
+  description = "The target database default database name"
+  type        = string
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# OPTIONAL PARAMETERS
+# Generally, these values won't need to be changed.
+# ---------------------------------------------------------------------------------------------------------------------
+
+
+variable "sql_username" {
+  description = "The SQL username"
+  type        = string
+  default     = "analytics_producer"
+}
+
+```
+Our new backend uses the
+[github.com/dataroche/terraform-gcp-pubsub-dlt-stream](https://github.com/dataroche/terraform-gcp-pubsub-dlt-stream)
+module as follow. This should be adapted to your use-case, as it includes the service
+account creation, Pub/Sub setup and Cloud SQL user (but not the creation of the database
+instance itself)
+
+```sh
+
+data "google_project" "project" {}
+
+locals {
+  roles = [
+    "roles/cloudsql.client", 
+    "roles/pubsub.subscriber", 
+    "roles/logging.logWriter"
+  ]
+}
+
+# Create a new service account only for this.
+resource "google_service_account" "service_account" {
+  account_id   = "events-processor"
+  display_name = "Events Processor"
+}
+
+resource "google_project_iam_member" "sa_binding" {
+  project = data.google_project.project.project_id
+  for_each = toset(local.roles)
+  role    = each.key
+  member  = "serviceAccount:${google_service_account.service_account.email}"
+}
+
+# Generate a password for a new PostgreSQL user.
+resource "random_password" "password" {
+  length = 16
+  special = true
+}
+
+# Create a PostgreSQL user
+resource "google_sql_user" "iam_user" {
+  instance = var.target_database_name
+  name     = var.sql_username
+  password = random_password.password.result
+  type     = "BUILT_IN"
+}
+
+# Create the Pub/Sub topic that will be streamed to PostgreSQL
+resource "google_pubsub_topic" "events" {
+  name = "events-topic"
+}
+
+resource "google_pubsub_subscription" "events" {
+  name  = "events-subscription"
+  topic = google_pubsub_topic.events.id
+
+  # 20 minutes
+  message_retention_duration = "1200s"
+  retain_acked_messages = true
+
+  ack_deadline_seconds = 20
+
+  expiration_policy {
+    ttl = "300000.5s"
+  }
+  retry_policy {
+    minimum_backoff = "10s"
+  }
+
+  enable_message_ordering = false
+}
+
+module "pubsub_dlt_stream" {
+  source = "github.com/dataroche/terraform-gcp-pubsub-dlt-stream?ref=master"
+  google_region = var.google_region
+  service_account_email = google_service_account.service_account.email
+  pubsub_dlt_stream_env = {
+    "DESTINATION_NAME" = "postgres"
+    "DESTINATION__POSTGRES__CREDENTIALS" = "postgresql://${var.sql_username}:${random_password.password.result}@${var.target_database_private_ip}:5432/${var.target_database_default_database_name}"
+    "LOAD__DELETE_COMPLETED_JOBS" = "1"
+    "DATASET_NAME" = "analytics"
+    "WINDOW_SIZE_SECS" = "5"
+    "MAX_BUNDLE_SIZE" = "5000"
+    "PUBSUB_INPUT_SUBSCRIPTION" = google_pubsub_subscription.events.id
+    "TABLE_NAME_DATA_KEY" = "eventName"
+    "TABLE_NAME_PREFIX" = "raw_events_"
+  }
+  machine_type = "n1-standard-1"
+  preemptible = true
+  autoscale_min_replicas = 1
+  autoscale_max_replicas = 5
+}
+
+```
+
+Using these 2 files, you can add this module to your Terraform project and hook your
+Pub/Sub events straight into your database.
+
+# Conclusion
+
+Instead of having to manually deploy an instance group, this module allows any existing
+Terraform project to hook a Pub/Sub JSON topic into an auto-scaled pool of
+[pubsub-dlt-stream](https://github.com/dataroche/pubsub-dlt-stream) workers. Easy!
