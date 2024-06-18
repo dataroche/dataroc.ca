@@ -18,7 +18,7 @@ Python script, this post is for you!
 
 <SubscribeCTA />
 
-# The data tables: a refresher
+## The data tables: a refresher
 
 
 As outlined in the preceding blog post, my live portfolio incorporates SQL views exposed
@@ -71,7 +71,7 @@ For data to be returned by REST endpoints like
 explore how my local scripts leverage PostgREST UPDATE endpoints to insert new data and
 update existing records.
 
-# Scaffolding PostgREST permissions
+## Scaffolding PostgREST permissions
 
 The write endpoints feature JWT token authentication for protection. In our previous
 post, we operated the PostgREST server with a SECRET_KEY environment variable. This
@@ -97,9 +97,9 @@ impersonate it. We shall remember that the authenticator role is the special
 initialization role that PostgREST uses to then use other roles based on the auth token
 provided.
 
-# Update endpoints
+## Update endpoints
 
-## Trades endpoint
+### Trades endpoint
 
 To create a writeable endpoint, the only thing needed is to grant appropriate
 permissions to the desired role. As for public views, PostgREST recommends writing to
@@ -120,7 +120,7 @@ GRANT USAGE on SCHEMA api to api_data_producer;
 GRANT SELECT, INSERT, UPDATE ON api.all_trades to api_data_producer;
 ```
 
-## Portfolio history
+### Portfolio history
 
 Nothing much different for the portfolio history view, except that we decided to support
 deletion. The update script deletes the last incomplete entry (the ongoing week, for
@@ -154,12 +154,12 @@ GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON api.portfolio_history to api_d
 I'm not exactly sure anymore if the GRANT on the `portfolio_history_id_seq` is
 necessary. Let me know if you try it out!
 
-# Adding data from an external Python script
+## Adding data from an external Python script
 
 Now that we have writable REST endpoints, securely invoking them is the next step. The
 Python implementation provided here is language-agnostic in its approach.
 
-## Generating the JWT token
+### Generating the JWT token
 
 PostgREST utilizes the standard `Authorization: 'Bearer ...'` header for authorization.
 Here's how to generate the token in Python using symmetrical encryption:
@@ -180,7 +180,7 @@ As an example, using this website and the `api_data_producer` role:
 auth_header = f'Bearer {generate_jwt(target_url, role)}'
 ```
 
-## Adding trades
+### Adding trades
 
 Once we have a JWT token, we can now POST data to our REST API. Utilizing the
 [postgrest-py](https://github.com/supabase-community/postgrest-py) library, Python makes
@@ -240,7 +240,7 @@ I utilize the Hummingbot order ID. If the order already exists, it will be seaml
 replaced. This feature enables my script to eagerly re-insert existing trades,
 eliminating concerns about duplicates.
 
-# Conclusion
+## Conclusion
 
 In conclusion, this tutorial has equipped you with the technical prowess to establish a
 robust writable API for your PostgreSQL database, seamlessly integrating Python and

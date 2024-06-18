@@ -21,7 +21,7 @@ Figuring out how to migrate the deployment to Terraform turned out to be quite a
 adventure, as running containers in a Compute VM is not a native solution. It requires
 the use of custom metadata and the errors are NOT verbose.
 
-# TL;DR
+## TL;DR
 
 You can use this terraform module
 [github.com/dataroche/terraform-gcp-pubsub-dlt-stream](https://github.com/dataroche/terraform-gcp-pubsub-dlt-stream)
@@ -33,7 +33,7 @@ to stream JSON Pub/Sub messages straight into Cloud SQL on GCP!
 - Cost of $8.03/mth per active worker using n1-standard-1 spot machines.
 - Auto-scaled using production-tested settings with configurable min/max replicas.
 
-## Steps automated
+### Steps automated
 
 The manual steps that are automated in this Terraform module are the ones defined in the
 [pubsub-dlt-stream](https://github.com/dataroche/pubsub-dlt-stream) repo's README.
@@ -41,7 +41,7 @@ The manual steps that are automated in this Terraform module are the ones define
 As part of this project, I also deployed the pubsub-dlt-stream image on docker hub:
 [https://hub.docker.com/r/dataroc/pubsub-dlt-stream](https://hub.docker.com/r/dataroc/pubsub-dlt-stream)
 
-# Example usage
+## Example usage
 
 Given these variables as input:
 
@@ -181,7 +181,7 @@ module "pubsub_dlt_stream" {
 Using these 2 files, you can add this module to your Terraform project and hook your
 Pub/Sub events straight into your database.
 
-# Conclusion
+## Conclusion
 
 Instead of having to manually deploy an instance group, this module allows any existing
 Terraform project to hook a Pub/Sub JSON topic into an auto-scaled pool of

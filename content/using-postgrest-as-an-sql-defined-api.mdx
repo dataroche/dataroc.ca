@@ -27,9 +27,9 @@ has to offer.
 
 <SubscribeCTA />
 
-# The basics
+## The basics
 
-## Scaffolding PostgREST permissions
+### Scaffolding PostgREST permissions
 
 The first thing to do when creating your PostgREST API is to create the appropriate
 database users. PostgREST requires a special authenticator role: all database calls
@@ -60,7 +60,7 @@ We will cover shortly how to tell PostgREST about these role names. These previo
 I usually do outside of database migration control: they are pre-requisites to building
 out the database schema from scratch, in addition to `CREATE DATABASE ...` statements.
 
-## Creating the API schema
+### Creating the API schema
 
 Once we have the basic scaffolding in place, we can now create our first view! One thing
 that is crucial for PostgREST is to define the public database schema. Anything
@@ -81,7 +81,7 @@ CREATE VIEW api.hello_world AS (
 GRANT SELECT on api.hello_world to api_anon;
 ```
 
-## Running PostgREST
+### Running PostgREST
 
 Since the PostgREST server simply looks at your database schema to build the REST API,
 you never need to deploy the service when making changes! This is one of the great
@@ -117,9 +117,9 @@ http://localhost:5001 endpoint.
 And the hello world from `http://localhost:5001/hello_world`, since we named the table
 `hello_world`.
 
-# My live portfolio endpoints
+## My live portfolio endpoints
 
-## Weekly performance history
+### Weekly performance history
 
 The first view I added to the portfolio is the weekly performance history.
 It is based off a table named `portfolio_history`:
@@ -179,7 +179,7 @@ NOTIFY pgrst, 'reload schema';
 
 I append this notification at the end of all my migration scripts.
 
-## Summarized stats
+### Summarized stats
 
 I recently added stats to the performance page. They are sprinkled throughout the text:
 number of trades, trade volume, last update timestamp, etc.
@@ -303,7 +303,7 @@ This gets the last portfolio_history entry which contains the portfolio value an
 updated at timestamp. In addition, it computes the number of trades and the total value
 in USD of these trades based on the new trades table!
 
-# Conclusion
+## Conclusion
 
 PostgREST is a simple and effective way to build an SQL-defined API on top of your
 PostgreSQL database. The performance is great and the memory footprint minimal. You can

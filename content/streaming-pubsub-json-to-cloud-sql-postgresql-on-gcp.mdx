@@ -25,7 +25,7 @@ them directly into a Cloud SQL PostgreSQL database using micro-batch processing.
 
 <SubscribeCTA />
 
-# The issue at hand
+## The issue at hand
 
 In my current role at WishRoll, I was faced with the issue of processing a high amount
 of events and store them in the production database directly. 
@@ -35,7 +35,7 @@ logged-in", and "task X was completed" (among others). Eventually, for example, 
 to run analytics queries on those events to count how many times a user logs in to
 better tailor their experience.
 
-## A. The trivial solution: synchronous insert
+### A. The trivial solution: synchronous insert
 
 The trivial solution is to synchronously insert these events directly in the database. A
 simple implementation would mean that each event fired results in a single insert to the
@@ -49,7 +49,7 @@ per second. I concluded this solution would not be scalable. To make it so, 2 th
 would be necessary: (1) make the event firing mechanism asynchronous and (2) bulk events
 together before insertion.
 
-## B. The serverless asynchronous solution
+### B. The serverless asynchronous solution
 
 A second solution is to use a Pub/Sub push subscription to trigger an HTTP endpoint when
 a message comes in. This would've been easy in my case because we already have a
@@ -60,7 +60,7 @@ time to the HTTP service.
 Although it's possible to implement some sort of bulking mechanism in a push endpoint,
 it's much easier to have a worker pull many messages at once instead.
 
-## C. The serverless, fully-managed Dataflow solution
+### C. The serverless, fully-managed Dataflow solution
 
 This led me to implement a complete streaming pipeline using GCP's streaming service:
 Dataflow. Spoiler: this was way overkill and led to weird bugs with DLT ([data load
@@ -70,7 +70,7 @@ too](https://github.com/dataroche/pubsub-dataflow-dlt).
 This solved both issues of the trivial solution, but proved pretty expensive and hard to
 debug and monitor.
 
-## D. An autoscaled asynchronous pull worker
+### D. An autoscaled asynchronous pull worker
 
 Disclaimer: I had never considered standalone machines from cloud providers (AWS EC2, GCP Compute
 Engine) to be a viable solution to my cloud problems. In my head, they seemed like
@@ -88,7 +88,7 @@ bulk the messages together, and then insert them in the database. Repeat.
 Then deploy that code as an instance group that auto-scales based on the need to process
 messages.
 
-# Code walkthrough
+## Code walkthrough
 
 [The complete source code is available here.](https://github.com/dataroche/pubsub-dlt-stream)
 
@@ -99,7 +99,7 @@ Summarily, the code is comprised of 2 main parts:
 - The load logic to infer the schema and bulk insert the records into the database. This
   part leverages DLT for destination compatibility and schema inference
 
-## Main loop
+### Main loop
 
 By using this micro-batch architecture, we strive to maintain a balance of database
 insert efficiency (by writing multiple records at a time) with near real-time insertion
@@ -132,11 +132,11 @@ finally:
 
 ```
 
-## How to deploy
+### How to deploy
 
 [The GitHub repo explains how to deploy the project as an instance group](https://github.com/dataroche/pubsub-dlt-stream?tab=readme-ov-file#example-deployment-as-a-gcp-instance-group).
 
-## Database concerns
+### Database concerns
 
 Using DLT has the major advantage of inferring the schema of your JSON data
 automatically. This also comes with some caveats:
@@ -154,12 +154,12 @@ tables.
 section](https://github.com/dataroche/pubsub-dlt-stream?tab=readme-ov-file#output-table-format)
 for an example of application code and the resulting table.
 
-# Performance and cost
+## Performance and cost
 
 After running this code and doing backfills for a couple of weeks, I was able to
 benchmark the overall efficiency and cost of this solution.
 
-## Throughput capacity
+### Throughput capacity
 
 <img
   src="/images/streaming-pubsub/pubsub_performance.png"
@@ -175,7 +175,7 @@ auto-scales between 2 and 10 instances. In normal operation, a single worker can
 our load easily. However, because of the preemptible nature of the instances, I set the
 minimum number to 2 to avoid periods where no worker is running.
 
-## Maximum capacity
+### Maximum capacity
 
 When deploying the solution with a backlog of messages to process (15 hours worth of
 messages), 10 instances were spawned and cleared the backlog in about 25 minutes.
@@ -191,12 +191,12 @@ backlog by 10:50AM.
 Between 7000 and 10000 messages per second were processed on average by these 10
 instances, resulting in a minimum throughput capacity of 700 messages/s per worker.
 
-## Cost
+### Cost
 
 Using n1-standard-1 spot machines, this cluster costs $8.03/mth per active machine. With
 a minimum cluster size of 2, this means $16.06 per month.
 
-# Conclusion
+## Conclusion
 
 Using more "primitive" GCP services around Compute Engine provides a straightforward and
 cost-effective way to process a high throughput of Pub/Sub messages from a pull
